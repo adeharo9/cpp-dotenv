@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# ANTLR
+.antlr
+
+# Project specifics
+*.env
