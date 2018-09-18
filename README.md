@@ -1,6 +1,8 @@
 # dotenvcpp
 c++ implementation of nodejs [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from .env for c++ projects.
 
+**Please take into account this is still a developing project.**
+
 **dotenvcpp** is implemented as a single C++ header file, so there is no need to compile nor to add complex file dependencies to your project. Simply include the header file wherever you want to use it and ta-da!, you're done.
 
 ## Dependencies
@@ -54,7 +56,7 @@ would produce the following outputs:
 $ ./main
   DB_NAME: DontDoThisAtHome
   eval "ping 8.8.8.8"
-  
+
 $
 ```
 
