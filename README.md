@@ -1,9 +1,9 @@
-# dotenvcpp
+# cpp-dotenv
 c++ implementation of nodejs [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from .env for c++ projects.
 
 **Please take into account this is still a developing project.**
 
-**dotenvcpp** is implemented as a single C++ header file, so there is no need to compile nor to add complex file dependencies to your project. Simply include the header file wherever you want to use it and ta-da!, you're done.
+**cpp-dotenv** is implemented as a single C++ header file, so there is no need to compile nor to add complex file dependencies to your project. Simply include the header file wherever you want to use it and ta-da!, you're done.
 
 ## Dependencies
 **NONE**, for sure! :sunglasses: If it had it wouldn't follow the basic dotenv principles.
@@ -17,7 +17,7 @@ For the sake of simplycity (and if your project namespace density allows to), yo
 ```
 using namespace dotenv;
 ```
-For convenience, **dotenvcpp** auto-configures the `dotenv` class object (which is instance of the singleton class `dotenv`) by calling `dotenv.config()` at the very beginning of your file (just right before the end of `dotenv.h`), although if you need to reload the environment simply re-run the configuration; everything new will show up on the `dotenv` instance.
+For convenience, **cpp-dotenv** auto-configures the `dotenv` class object (which is instance of the singleton class `dotenv`) by calling `dotenv.config()` at the very beginning of your file (just right before the end of `dotenv.h`), although if you need to reload the environment simply re-run the configuration; everything new will show up on the `dotenv` instance.
 
 Also for convenience, there is a namespace-global pre-loaded reference variable to the `dotenv` singleton class instance, named `env`. Simply use it as you would use a dotenv object on nodejs, or you can define your own references:
 ```
