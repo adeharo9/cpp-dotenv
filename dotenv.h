@@ -126,8 +126,6 @@ namespace dotenv
             env();
         }
 
-    private:
-
         inline void init()
         {
             token = is.get();
@@ -296,7 +294,6 @@ namespace dotenv
         {
             throw syntax_error("Syntax error on line " + std::to_string(row_count) + ":" + std::to_string(col_count));
         }
-    private:
 
         inline void bind(std::string& s)
         {
