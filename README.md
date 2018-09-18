@@ -61,4 +61,4 @@ $
 ```
 
 ## Grammar
-For the geeks, you can check the grammar I've implemented on the `grammar/env.g4` file. Despite being written in an ANTLR4 fashion, I've implemented a simple recursive parser myself given the basic nature of the language. It is available under the `dotenv::parser` class.
+For the geeks, you can check the grammar I've implemented on the `grammar/env.g4` file. Despite being written in an ANTLR4 fashion, I've implemented a simple recursive parser myself given the basic nature of the language. The parser and its methods are publicly available under the `dotenv::parser` class.
