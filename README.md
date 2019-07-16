@@ -47,7 +47,7 @@ int main()
 {
     auto& dotenv = env;  // Reference re-naming
 
-    cout << "DB_NAME: " << dotenv["DB_NAME] << endl;
+    cout << "DB_NAME: " << dotenv["DB_NAME"] << endl;
     cout << "eval \"" << dotenv["COMMAND"] << " " << dotenv["HOST"] << "\"" << endl;
 }
 ```
