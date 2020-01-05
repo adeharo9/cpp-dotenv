@@ -184,25 +184,61 @@ namespace dotenv
         inline void key()
         {
             DEBUG_ENTER(KEY);
-            bind(_key);
 
-            if (token_is(UNQUOTED_KEY_CHAR)) { UNQUOTED_KEY(); }
-            else if (token_is(SQ_C) or token_is(DQ_C)) { STRING(); }
+            if (token_is(UNQUOTED_KEY_CHAR))
+            {
+                bind(_key);
+                UNQUOTED_KEY();
+                unbind(_key);
+            }
+            else if (token_is(SQ_C))
+            {
+                match(SQ_C);
+                bind(_key);
+                SINGLE_UNQUOTED_STRING();
+                unbind(_key);
+                match(SQ_C);
+            }
+            else if (token_is(DQ_C))
+            {
+                match(DQ_C);
+                bind(_key);
+                DOUBLE_UNQUOTED_STRING();
+                unbind(_key);
+                match(DQ_C);
+            }
             else { syntax_err(); }
 
-            unbind(_key);
             DEBUG_EXIT(KEY);
         }
 
         inline void value()
         {
             DEBUG_ENTER(VALUE);
-            bind(_value);
 
-            if (token_is(UNQUOTED_VALUE_CHAR)) { UNQUOTED_VALUE(); }
-            else if (token_is(SQ_C) or token_is(DQ_C)) { STRING(); }
+            if (token_is(UNQUOTED_VALUE_CHAR))
+            {
+                bind(_value);
+                UNQUOTED_VALUE();
+                unbind(_value);
+            }
+            else if (token_is(SQ_C))
+            {
+                match(SQ_C);
+                bind(_value);
+                SINGLE_UNQUOTED_STRING();
+                unbind(_value);
+                match(SQ_C);
+            }
+            else if (token_is(DQ_C))
+            {
+                match(DQ_C);
+                bind(_value);
+                DOUBLE_UNQUOTED_STRING();
+                unbind(_value);
+                match(DQ_C);
+            }
 
-            unbind(_value);
             DEBUG_EXIT(VALUE);
         }
 
@@ -216,25 +252,18 @@ namespace dotenv
             DEBUG_EXIT(COMMENT);
         }
 
-        inline void STRING()
+        inline void SINGLE_UNQUOTED_STRING()
         {
-            DEBUG_ENTER(STRING);
+            DEBUG_ENTER(SINGLE_UNQUOTED_STRING);
+            while (not token_is(SQ_C)) { next(); }
+            DEBUG_EXIT(SINGLE_UNQUOTED_STRING);
+        }
 
-            if (token_is(SQ_C))
-            {
-                match(SQ_C);
-                while (not token_is(SQ_C)) { next(); }
-                match(SQ_C);
-            }
-            else if (token_is(DQ_C))
-            {
-                match(DQ_C);
-                while (not token_is(DQ_C)) { next(); }
-                match(DQ_C);
-            }
-            else { syntax_err(); }
-
-            DEBUG_EXIT(STRING);
+        inline void DOUBLE_UNQUOTED_STRING()
+        {
+            DEBUG_ENTER(DOUBLE_UNQUOTED_STRING);
+            while (not token_is(DQ_C)) { next(); }
+            DEBUG_EXIT(DOUBLE_UNQUOTED_STRING);
         }
 
         inline void UNQUOTED_KEY()

@@ -13,13 +13,18 @@ line_content
 // FOLLOW: NL, EOF
 
 key
-    : UNQUOTED_KEY | STRING
+    : UNQUOTED_KEY
+    | '\''SINGLE_UNQUOTED_STRING '\''
+    | '"' DOUBLE_UNQUOTED_STRING '"'
     ;
 // FIRST: UNQUOTED_KEY_CHAR, '"', '\''
 // FOLLOW: SP, EQ
 
 value
-    : (UNQUOTED_VALUE | STRING)?
+    : UNQUOTED_VALUE
+    | ('\''SINGLE_UNQUOTED_STRING '\'')
+    | ('"' DOUBLE_UNQUOTED_STRING '"')
+    |
     ;
 // FIRST: UNQUOTED_VALUE_CHAR, '"', '\'', 3
 // FOLLOW: SP, CS, NL, EOF
