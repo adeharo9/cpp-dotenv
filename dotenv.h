@@ -145,6 +145,7 @@ namespace dotenv
             init();
 
             DEBUG_ENTER(ENV);
+
             line_content();
             while (token_is(NL_C) or token_is(CR_C))
             {
@@ -152,6 +153,7 @@ namespace dotenv
                 line_content();
             }
             eof();
+
             DEBUG_EXIT(ENV);
         }
 
@@ -162,21 +164,22 @@ namespace dotenv
 
             DEBUG_ENTER(LINE_CONTENT);
 
-            while (token_is(SP)) match(SP);
+            while (token_is(SP)) { match(SP); }
 
-            if (token_is(UNQUOTED_KEY_CHAR || DQ_C || SQ_C))
+            if (token_is(UNQUOTED_KEY_CHAR || SQ_C || DQ_C))
             {
                 key();
-                while (token_is(SP)) match(SP);
+                while (token_is(SP)) { match(SP); }
                 match(EQ_C);
-                while (token_is(SP)) match(SP);
+                while (token_is(SP)) { match(SP); }
                 value();
-                while (token_is(SP)) match(SP);
+                while (token_is(SP)) { match(SP); }
 
                 insert_to_map();
             }
 
             if (token_is(CS_C)) { comment(); }
+
             DEBUG_EXIT(LINE_CONTENT);
         }
 
@@ -184,14 +187,11 @@ namespace dotenv
         {
             DEBUG_ENTER(KEY);
             bind(_key);
-            if (token_is(UNQUOTED_KEY_CHAR)) { UNQUOTED_KEY(); }
-            else STRING();
 
-            while (token_is(UNQUOTED_KEY_CHAR || DQ_C || SQ_C))
-            {
-                if (token_is(UNQUOTED_KEY_CHAR)) { UNQUOTED_KEY(); }
-                else STRING();
-            }
+            if (token_is(UNQUOTED_KEY_CHAR)) { UNQUOTED_KEY(); }
+            else if (token_is(SQ_C) or token_is(DQ_C)) { STRING(); }
+            else { syntax_err(); }
+
             unbind(_key);
             DEBUG_EXIT(KEY);
         }
@@ -200,11 +200,10 @@ namespace dotenv
         {
             DEBUG_ENTER(VALUE);
             bind(_value);
-            while (token_is(UNQUOTED_VALUE_CHAR || DQ_C || SQ_C))
-            {
-                if (token_is(UNQUOTED_VALUE_CHAR)) { UNQUOTED_VALUE(); }
-                else STRING();
-            }
+
+            if (token_is(UNQUOTED_VALUE_CHAR)) { UNQUOTED_VALUE(); }
+            else if (token_is(SQ_C) or token_is(DQ_C)) { STRING(); }
+
             unbind(_value);
             DEBUG_EXIT(VALUE);
         }
@@ -212,34 +211,50 @@ namespace dotenv
         inline void comment()
         {
             DEBUG_ENTER(COMMENT);
+
             match(CS_C);
-            UNQUOTED_COMMENT();
+            if (token_is(UNQUOTED_COMMENT_CHAR)) { UNQUOTED_COMMENT(); }
+
             DEBUG_EXIT(COMMENT);
         }
 
         inline void STRING()
         {
             DEBUG_ENTER(STRING);
-            next();
+
+            if (token_is(SQ_C))
+            {
+                match(SQ_C);
+                while (not token_is(SQ_C)) { next(); }
+                match(SQ_C);
+            }
+            else if (token_is(DQ_C))
+            {
+                match(DQ_C);
+                while (not token_is(DQ_C)) { next(); }
+                match(DQ_C);
+            }
+            else { syntax_err(); }
+
             DEBUG_EXIT(STRING);
         }
 
         inline void UNQUOTED_KEY()
         {
             match(UNQUOTED_KEY_CHAR);
-            while (token_is(UNQUOTED_KEY_CHAR)) match(UNQUOTED_KEY_CHAR);
+            while (token_is(UNQUOTED_KEY_CHAR)) { match(UNQUOTED_KEY_CHAR); }
         }
 
         inline void UNQUOTED_VALUE()
         {
             match(UNQUOTED_VALUE_CHAR);
-            while (token_is(UNQUOTED_VALUE_CHAR)) match(UNQUOTED_VALUE_CHAR);
+            while (token_is(UNQUOTED_VALUE_CHAR)) { match(UNQUOTED_VALUE_CHAR); }
         }
 
         inline void UNQUOTED_COMMENT()
         {
             match(UNQUOTED_COMMENT_CHAR);
-            while (token_is(UNQUOTED_COMMENT_CHAR)) match(UNQUOTED_COMMENT_CHAR);
+            while (token_is(UNQUOTED_COMMENT_CHAR)) { match(UNQUOTED_COMMENT_CHAR); }
         }
 
         inline void NL()
