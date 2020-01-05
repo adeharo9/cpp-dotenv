@@ -71,8 +71,6 @@ would produce the following output:
 $ ./main
   DB_NAME: DontDoThisAtHome
   eval "ping 8.8.8.8"
-
-$
 ```
 
 ## Grammar
