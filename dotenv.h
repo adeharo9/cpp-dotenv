@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <cstdlib>
 #include <fstream>
 #include <stdexcept>
 #include <unordered_map>
@@ -118,14 +119,11 @@ namespace dotenv
     {
     public:
 
-        using mapped_t = std::string;
-        using  value_t = std::string;
         using stream_t = std::istream;
-        using    map_t = std::unordered_map<mapped_t, value_t>;
 
     public:
 
-        parser(stream_t& is, map_t& map): is(is), map(map) { }
+        parser(stream_t& is): is(is) { }
 
         inline void parse()
         {
@@ -311,9 +309,9 @@ namespace dotenv
             ++col_count;
         }
 
-        inline void syntax_err()
+        inline void syntax_err(const std::string& message = "")
         {
-            throw syntax_error("Syntax error on line " + std::to_string(row_count) + ":" + std::to_string(col_count));
+            throw syntax_error("Syntax error on line " + std::to_string(row_count) + ":" + std::to_string(col_count) + " -- " + message);
         }
 
         inline void bind(std::string& s)
@@ -334,7 +332,7 @@ namespace dotenv
             if (bond or binded != nullptr) { throw std::runtime_error("Something weird is happening"); }
             if (_key.empty()) { throw std::runtime_error(""); }
 
-            map.emplace(_key, _value);
+            setenv(_key.c_str(), _value.c_str(), 0);
         }
 
     private:
@@ -350,7 +348,6 @@ namespace dotenv
         std::string _value;
 
         stream_t& is;
-        map_t& map;
 
     private:
 
@@ -438,18 +435,18 @@ namespace dotenv
             return *this;
         }
 
-        inline const value_type& operator[](const key_type& k) const
+        inline const value_type operator[](const key_type& k) const
         {
             if (not _config) { throw std::logic_error(config_err); }
 
-            try
+            const char* value = std::getenv(k.c_str());
+            
+            if (value == nullptr)
             {
-                return _env.at(k);
+                value = "";
             }
-            catch (const std::out_of_range& exception)
-            {
-                throw std::out_of_range("key '" + k + "' not found");
-            }
+
+            return value_type(value);
         }
 
         dotenv(const dotenv&) = delete;
@@ -466,14 +463,13 @@ namespace dotenv
 
         inline void parse(std::ifstream& file)
         {
-            parser parser(file, _env);
+            parser parser(file);
             parser.parse();
         }
 
     private:
 
         bool _config = false;
-        std::unordered_map<key_type, value_type> _env;
 
         static const std::string env_filename;
         static const std::string config_err;
