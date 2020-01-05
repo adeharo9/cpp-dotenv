@@ -309,9 +309,9 @@ namespace dotenv
             ++col_count;
         }
 
-        inline void syntax_err()
+        inline void syntax_err(const std::string& message = "")
         {
-            throw syntax_error("Syntax error on line " + std::to_string(row_count) + ":" + std::to_string(col_count));
+            throw syntax_error("Syntax error on line " + std::to_string(row_count) + ":" + std::to_string(col_count) + " -- " + message);
         }
 
         inline void bind(std::string& s)
