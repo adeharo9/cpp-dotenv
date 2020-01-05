@@ -123,7 +123,7 @@ namespace dotenv
 
     public:
 
-        parser(stream_t& is): is(is) { }
+        parser(stream_t& is, const bool overwrite): overwrite(overwrite), is(is) { }
 
         inline void parse()
         {
@@ -173,7 +173,7 @@ namespace dotenv
                 value();
                 while (token_is(SP)) { match(SP); }
 
-                insert_to_map();
+                register_variable();
             }
 
             if (token_is(CS_C)) { comment(); }
@@ -356,15 +356,17 @@ namespace dotenv
             bond = false;
         }
 
-        inline void insert_to_map()
+        inline void register_variable()
         {
             if (bond or binded != nullptr) { throw std::runtime_error("Something weird is happening"); }
             if (_key.empty()) { throw std::runtime_error(""); }
 
-            setenv(_key.c_str(), _value.c_str(), 0);
+            setenv(_key.c_str(), _value.c_str(), overwrite ? 1 : 0);
         }
 
     private:
+
+        const bool overwrite = false;
 
         char token;
         uint row_count;
@@ -438,7 +440,6 @@ namespace dotenv
         CR_C
     };
 
-
     class dotenv
     {
     private:
@@ -448,14 +449,14 @@ namespace dotenv
 
     public:
 
-        inline dotenv& config(const std::string& full_path = env_filename)
+        inline dotenv& load_dotenv(const std::string& full_path = env_filename, const bool overwrite = false)
         {
             std::ifstream env_file;
             env_file.open(full_path);
 
             if (env_file.good())
             {
-                parse(env_file);
+                parse(env_file, overwrite);
                 env_file.close();
             }
 
@@ -490,9 +491,9 @@ namespace dotenv
 
         dotenv() = default;
 
-        inline void parse(std::ifstream& file)
+        inline void parse(std::ifstream& file, const bool overwrite = false)
         {
-            parser parser(file);
+            parser parser(file, overwrite);
             parser.parse();
         }
 
@@ -512,5 +513,5 @@ namespace dotenv
     dotenv dotenv::_instance;
 
 
-    dotenv& env = dotenv::instance().config();
+    dotenv& env = dotenv::instance().load_dotenv();
 }

@@ -24,7 +24,7 @@ For the sake of simplycity (and if your project namespace density allows to), yo
 using namespace dotenv;
 ```
 
-For convenience, **cpp-dotenv** auto-configures a class object (which is instance of the singleton class `dotenv`) by calling the `config()` method at the very beginning of your file (just right before the end of `dotenv.h`), although if you need to reload the environment simply re-run the configuration; everything new will show up on `dotenv` instances.
+For convenience, **cpp-dotenv** auto-configures a class object (which is instance of the singleton class `dotenv`) by calling the `load_dotenv()` method at the very beginning of your file (just right before the end of `dotenv.h`) and trying to load a `.env` file, although if you need to add-in your own files (like `.myenv`), simply re-run the loading step passing the file name as parameter; everything new will show up on the `dotenv` instances.
 
 Also for convenience, there is a namespace-global pre-loaded reference variable to the `dotenv` singleton class instance named `env`. Simply use it as you would use a dotenv object on NodeJS, or you can define your own references:
 
