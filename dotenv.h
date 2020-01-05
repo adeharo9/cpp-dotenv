@@ -1,9 +1,12 @@
 #pragma once
 
+
+#include <cstdlib>
 #include <fstream>
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
+
 
 #ifdef _DEBUG
     #include <iostream>
@@ -15,6 +18,7 @@
     #define  DEBUG_EXIT(x)
 #endif
 
+
 namespace dotenv
 {
     class syntax_error: public std::runtime_error
@@ -25,11 +29,12 @@ namespace dotenv
 
     };
 
+
     class container
     {
     private:
 
-        typedef std::vector<char> container_t ;
+        using container_t = std::vector<char>;
 
     public:
 
@@ -103,23 +108,22 @@ namespace dotenv
 
     };
 
+
     inline container operator||(const char c, const container cont)
     {
         return cont || c;
     }
 
+
     class parser
     {
     public:
 
-        typedef std::string mapped_t;
-        typedef std::string value_t;
-        typedef std::istream stream_t;
-        typedef std::unordered_map<mapped_t, value_t> map_t;
+        using stream_t = std::istream;
 
     public:
 
-        parser(stream_t& is, map_t& map): is(is), map(map) { }
+        parser(stream_t& is): is(is) { }
 
         inline void parse()
         {
@@ -139,6 +143,7 @@ namespace dotenv
             init();
 
             DEBUG_ENTER(ENV);
+
             line_content();
             while (token_is(NL_C) or token_is(CR_C))
             {
@@ -146,6 +151,7 @@ namespace dotenv
                 line_content();
             }
             eof();
+
             DEBUG_EXIT(ENV);
         }
 
@@ -156,95 +162,137 @@ namespace dotenv
 
             DEBUG_ENTER(LINE_CONTENT);
 
-            while (token_is(SP)) match(SP);
+            while (token_is(SP)) { match(SP); }
 
-            if (token_is(UNQUOTED_KEY_CHAR || DQ_C || SQ_C))
+            if (token_is(UNQUOTED_KEY_CHAR || SQ_C || DQ_C))
             {
                 key();
-                while (token_is(SP)) match(SP);
+                while (token_is(SP)) { match(SP); }
                 match(EQ_C);
-                while (token_is(SP)) match(SP);
+                while (token_is(SP)) { match(SP); }
                 value();
-                while (token_is(SP)) match(SP);
+                while (token_is(SP)) { match(SP); }
 
                 insert_to_map();
             }
 
-            if (token_is(CS_C)) comment();
+            if (token_is(CS_C)) { comment(); }
+
             DEBUG_EXIT(LINE_CONTENT);
         }
 
         inline void key()
         {
             DEBUG_ENTER(KEY);
-            bind(_key);
-            if (token_is(UNQUOTED_KEY_CHAR)) UNQUOTED_KEY();
-            else STRING();
 
-            while (token_is(UNQUOTED_KEY_CHAR || DQ_C || SQ_C))
+            if (token_is(UNQUOTED_KEY_CHAR))
             {
-                if (token_is(UNQUOTED_KEY_CHAR)) UNQUOTED_KEY();
-                else STRING();
+                bind(_key);
+                UNQUOTED_KEY();
+                unbind(_key);
             }
-            unbind(_key);
+            else if (token_is(SQ_C))
+            {
+                match(SQ_C);
+                bind(_key);
+                SINGLE_UNQUOTED_STRING();
+                unbind(_key);
+                match(SQ_C);
+            }
+            else if (token_is(DQ_C))
+            {
+                match(DQ_C);
+                bind(_key);
+                DOUBLE_UNQUOTED_STRING();
+                unbind(_key);
+                match(DQ_C);
+            }
+            else { syntax_err(); }
+
             DEBUG_EXIT(KEY);
         }
 
         inline void value()
         {
             DEBUG_ENTER(VALUE);
-            bind(_value);
-            while (token_is(UNQUOTED_VALUE_CHAR || DQ_C || SQ_C))
+
+            if (token_is(UNQUOTED_VALUE_CHAR))
             {
-                if (token_is(UNQUOTED_VALUE_CHAR)) UNQUOTED_VALUE();
-                else STRING();
+                bind(_value);
+                UNQUOTED_VALUE();
+                unbind(_value);
             }
-            unbind(_value);
+            else if (token_is(SQ_C))
+            {
+                match(SQ_C);
+                bind(_value);
+                SINGLE_UNQUOTED_STRING();
+                unbind(_value);
+                match(SQ_C);
+            }
+            else if (token_is(DQ_C))
+            {
+                match(DQ_C);
+                bind(_value);
+                DOUBLE_UNQUOTED_STRING();
+                unbind(_value);
+                match(DQ_C);
+            }
+
             DEBUG_EXIT(VALUE);
         }
 
         inline void comment()
         {
             DEBUG_ENTER(COMMENT);
+
             match(CS_C);
-            UNQUOTED_COMMENT();
+            if (token_is(UNQUOTED_COMMENT_CHAR)) { UNQUOTED_COMMENT(); }
+
             DEBUG_EXIT(COMMENT);
         }
 
-        inline void STRING()
+        inline void SINGLE_UNQUOTED_STRING()
         {
-            DEBUG_ENTER(STRING);
-            next();
-            DEBUG_EXIT(STRING);
+            DEBUG_ENTER(SINGLE_UNQUOTED_STRING);
+            while (not token_is(SQ_C)) { next(); }
+            DEBUG_EXIT(SINGLE_UNQUOTED_STRING);
+        }
+
+        inline void DOUBLE_UNQUOTED_STRING()
+        {
+            DEBUG_ENTER(DOUBLE_UNQUOTED_STRING);
+            while (not token_is(DQ_C)) { next(); }
+            DEBUG_EXIT(DOUBLE_UNQUOTED_STRING);
         }
 
         inline void UNQUOTED_KEY()
         {
             match(UNQUOTED_KEY_CHAR);
-            while (token_is(UNQUOTED_KEY_CHAR)) match(UNQUOTED_KEY_CHAR);
+            while (token_is(UNQUOTED_KEY_CHAR)) { match(UNQUOTED_KEY_CHAR); }
         }
 
         inline void UNQUOTED_VALUE()
         {
             match(UNQUOTED_VALUE_CHAR);
-            while (token_is(UNQUOTED_VALUE_CHAR)) match(UNQUOTED_VALUE_CHAR);
+            while (token_is(UNQUOTED_VALUE_CHAR)) { match(UNQUOTED_VALUE_CHAR); }
         }
 
         inline void UNQUOTED_COMMENT()
         {
             match(UNQUOTED_COMMENT_CHAR);
-            while (token_is(UNQUOTED_COMMENT_CHAR)) match(UNQUOTED_COMMENT_CHAR);
+            while (token_is(UNQUOTED_COMMENT_CHAR)) { match(UNQUOTED_COMMENT_CHAR); }
         }
 
         inline void NL()
         {
-            if (token_is(CR_C)) match(CR_C);
+            if (token_is(CR_C)) { match(CR_C); }
             match(NL_C);
         }
 
         inline void eof()
         {
-            if (not is.eof()) syntax_err();
+            if (not is.eof()) { syntax_err(); }
         }
 
         inline bool token_is(char c)
@@ -254,45 +302,45 @@ namespace dotenv
 
         inline bool token_is(const container& cont)
         {
-            if (is.eof()) return false;
+            if (is.eof()) { return false; }
 
             for (char c: cont.include())
             {
-                if (token == c) return true;
+                if (token == c) { return true; }
             }
-            if (cont.exclude().empty()) return false;
+            if (cont.exclude().empty()) { return false; }
 
             for (char c: cont.exclude())
             {
-                if (token == c) return false;
+                if (token == c) { return false; }
             }
             return true;
         }
 
         inline void match(char c)
         {
-            if (token_is(c)) next();
+            if (token_is(c)) { next(); }
             else syntax_err();
         }
 
         inline void match(const container& c)
         {
-            if (token_is(c)) next();
+            if (token_is(c)) { next(); }
             else syntax_err();
         }
 
         inline void next()
         {
-            if (bond and binded != nullptr) binded -> append(1, token);
-            else if (bond and binded == nullptr) throw std::runtime_error("something weird happened to this pointer");
+            if (bond and binded != nullptr) { binded -> append(1, token); }
+            else if (bond and binded == nullptr) { throw std::runtime_error("something weird happened to this pointer"); }
 
             token = is.get();
             ++col_count;
         }
 
-        inline void syntax_err()
+        inline void syntax_err(const std::string& message = "")
         {
-            throw syntax_error("Syntax error on line " + std::to_string(row_count) + ":" + std::to_string(col_count));
+            throw syntax_error("Syntax error on line " + std::to_string(row_count) + ":" + std::to_string(col_count) + " -- " + message);
         }
 
         inline void bind(std::string& s)
@@ -310,10 +358,10 @@ namespace dotenv
 
         inline void insert_to_map()
         {
-            if (bond or binded != nullptr) throw std::runtime_error("Something weird is happening");
-            if (_key.empty()) throw std::runtime_error("");
+            if (bond or binded != nullptr) { throw std::runtime_error("Something weird is happening"); }
+            if (_key.empty()) { throw std::runtime_error(""); }
 
-            map.emplace(_key, _value);
+            setenv(_key.c_str(), _value.c_str(), 0);
         }
 
     private:
@@ -329,7 +377,6 @@ namespace dotenv
         std::string _value;
 
         stream_t& is;
-        map_t& map;
 
     private:
 
@@ -348,6 +395,7 @@ namespace dotenv
 
     };
 
+
     const container parser::SP
     {
         container::CHAR_MODE::INCLUDE,
@@ -355,30 +403,33 @@ namespace dotenv
         TB_C
     };
 
+
     const container parser::UNQUOTED_KEY_CHAR
     {
         container::CHAR_MODE::EXCLUDE,
         CS_C,
         EQ_C,
         SP_C,
-        DQ_C,
         SQ_C,
+        DQ_C,
         TB_C,
         NL_C,
         CR_C
     };
+
 
     const container parser::UNQUOTED_VALUE_CHAR
     {
         container::CHAR_MODE::EXCLUDE,
         CS_C,
         SP_C,
-        DQ_C,
         SQ_C,
+        DQ_C,
         TB_C,
         NL_C,
         CR_C
     };
+
 
     const container parser::UNQUOTED_COMMENT_CHAR
     {
@@ -387,12 +438,13 @@ namespace dotenv
         CR_C
     };
 
+
     class dotenv
     {
     private:
 
-        typedef std::string key_type;
-        typedef std::string value_type;
+        using   key_type = std::string;
+        using value_type = std::string;
 
     public:
 
@@ -412,18 +464,18 @@ namespace dotenv
             return *this;
         }
 
-        inline const value_type& operator[](const key_type& k) const
+        inline const value_type operator[](const key_type& k) const
         {
-            if (not _config) throw std::logic_error(config_err);
+            if (not _config) { throw std::logic_error(config_err); }
 
-            try
+            const char* value = std::getenv(k.c_str());
+            
+            if (value == nullptr)
             {
-                return _env.at(k);
+                value = "";
             }
-            catch (const std::out_of_range& exception)
-            {
-                throw std::out_of_range("key '" + k + "' not found");
-            }
+
+            return value_type(value);
         }
 
         dotenv(const dotenv&) = delete;
@@ -440,14 +492,13 @@ namespace dotenv
 
         inline void parse(std::ifstream& file)
         {
-            parser parser(file, _env);
+            parser parser(file);
             parser.parse();
         }
 
     private:
 
         bool _config = false;
-        std::unordered_map<key_type, value_type> _env;
 
         static const std::string env_filename;
         static const std::string config_err;
@@ -455,9 +506,11 @@ namespace dotenv
 
     };
 
+
     const std::string dotenv::env_filename = ".env";
     const std::string dotenv::config_err = "config() method must be called first";
     dotenv dotenv::_instance;
+
 
     dotenv& env = dotenv::instance().config();
 }
