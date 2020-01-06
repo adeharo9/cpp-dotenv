@@ -460,8 +460,6 @@ namespace dotenv
                 env_file.close();
             }
 
-            _config = true;
-
             return *this;
         }
 
@@ -473,8 +471,6 @@ namespace dotenv
 
         inline const value_type operator[](const key_type& k) const
         {
-            if (not _config) { throw std::logic_error(config_err); }
-
             const char* value = std::getenv(k.c_str());
             
             if (value == nullptr)
@@ -508,14 +504,12 @@ namespace dotenv
         bool _config = false;
 
         static const std::string env_filename;
-        static const std::string config_err;
         static dotenv _instance;
 
     };
 
 
     const std::string dotenv::env_filename = ".env";
-    const std::string dotenv::config_err = "config() method must be called first";
     dotenv dotenv::_instance;
 
 
