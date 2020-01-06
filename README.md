@@ -6,6 +6,14 @@ C++ implementation of nodejs [dotenv](https://github.com/motdotla/dotenv) projec
 
 **cpp-dotenv** is implemented as a single C++ header file, so there is no need to compile nor to add complex file dependencies to your project. Simply include the header file wherever you want to use it and ta-da!, you're done.
 
+## Table of contents
+
+1. [Dependencies](#dependencies)
+2. [Usage](#usage)
+   1. [CMake](#cmake)
+3. [Examples](#examples)
+4. [Grammar](#grammar)
+
 ## Dependencies
 
 **NONE**, for sure! :sunglasses: If it had, it wouldn't follow the basic dotenv principles.
@@ -31,6 +39,20 @@ Also for convenience, there is a namespace-global pre-loaded reference variable 
 ```cpp
 auto& dotenv = env; // 'auto' here is 'dotenv::dotenv'
 ```
+
+### CMake
+
+`cpp-dotenv` also comes with support for `CMake` right out of the box. In order to use it, simply include this repository's directory and link the `CPP_DOTENV_LIB` library to your own targets where needed:
+
+```cmake
+add_subdirectory(cpp-dotenv)
+
+...
+
+target_link_libraries(YOUR_TARGET PUBLIC ${CPP_DOTENV_LIB})
+```
+
+After this, you might use the library as described in [usage](#usage).
 
 ## Examples
 
