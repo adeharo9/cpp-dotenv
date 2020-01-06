@@ -366,7 +366,7 @@ namespace dotenv
 
     private:
 
-        const bool overwrite = false;
+        bool overwrite = false;
 
         char token;
         uint row_count;
@@ -463,6 +463,12 @@ namespace dotenv
             _config = true;
 
             return *this;
+        }
+
+        [[deprecated("Replaced by load_dotenv()")]]
+        inline dotenv& config(const std::string& full_path = env_filename)
+        {
+            return load_dotenv(full_path);
         }
 
         inline const value_type operator[](const key_type& k) const

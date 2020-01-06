@@ -40,3 +40,6 @@
 
 # VSCode specifics
 .vscode/
+
+# CMake specifics
+build/
