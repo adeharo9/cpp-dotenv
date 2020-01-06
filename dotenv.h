@@ -8,7 +8,7 @@
 #include <vector>
 
 
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(__DEBUG)
     #include <iostream>
 
     #define DEBUG_ENTER(x) std::cerr << "ENTER " << row_count << ":" << col_count << " " << #x << std::endl
@@ -255,39 +255,83 @@ namespace dotenv
         inline void SINGLE_UNQUOTED_STRING()
         {
             DEBUG_ENTER(SINGLE_UNQUOTED_STRING);
-            while (not token_is(SQ_C)) { next(); }
+            while (not token_is(SQ_C))
+            {
+                if (token_is(BS_C))
+                {
+                    possible_escaped_sequence();
+                }
+                else
+                {
+                    next();
+                }
+            }
             DEBUG_EXIT(SINGLE_UNQUOTED_STRING);
         }
 
         inline void DOUBLE_UNQUOTED_STRING()
         {
             DEBUG_ENTER(DOUBLE_UNQUOTED_STRING);
-            while (not token_is(DQ_C)) { next(); }
+            while (not token_is(DQ_C))
+            {
+                if (token_is(BS_C))
+                {
+                    possible_escaped_sequence();
+                }
+                else
+                {
+                    next();
+                }
+            }
             DEBUG_EXIT(DOUBLE_UNQUOTED_STRING);
         }
 
         inline void UNQUOTED_KEY()
         {
+            DEBUG_ENTER(UNQUOTED_KEY);
             match(UNQUOTED_KEY_CHAR);
             while (token_is(UNQUOTED_KEY_CHAR)) { match(UNQUOTED_KEY_CHAR); }
+            DEBUG_EXIT(UNQUOTED_KEY);
         }
 
         inline void UNQUOTED_VALUE()
         {
+            DEBUG_ENTER(UNQUOTED_VALUE);
             match(UNQUOTED_VALUE_CHAR);
             while (token_is(UNQUOTED_VALUE_CHAR)) { match(UNQUOTED_VALUE_CHAR); }
+            DEBUG_EXIT(UNQUOTED_VALUE);
         }
 
         inline void UNQUOTED_COMMENT()
         {
+            DEBUG_ENTER(UNQUOTED_COMMENT);
             match(UNQUOTED_COMMENT_CHAR);
             while (token_is(UNQUOTED_COMMENT_CHAR)) { match(UNQUOTED_COMMENT_CHAR); }
+            DEBUG_EXIT(UNQUOTED_COMMENT);
         }
 
         inline void NL()
         {
             if (token_is(CR_C)) { match(CR_C); }
             match(NL_C);
+        }
+
+        inline void possible_escaped_sequence()
+        {
+            match(BS_C);
+            for (auto& equivalence: ESCAPED_EQUIVALENCES)
+            {
+                if (equivalence.first == token)
+                {
+                    if (bond and binded != nullptr) { binded -> pop_back(); }
+                    else if (bond and binded == nullptr) { throw std::runtime_error("something weird happened to this pointer"); }
+
+                    token = equivalence.second;
+                    next();
+
+                    break;
+                }
+            }
         }
 
         inline void eof()
@@ -382,18 +426,20 @@ namespace dotenv
 
     private:
 
-        static const char CS_C = '#';
-        static const char EQ_C = '=';
-        static const char SP_C = ' ';
-        static const char SQ_C = '\'';
-        static const char DQ_C = '\"';
-        static const char TB_C = '\t';
-        static const char NL_C = '\n';
-        static const char CR_C = '\r';
+        static const char CS_C = '#';   // Comment (sharp)
+        static const char EQ_C = '=';   // Equal sign
+        static const char SP_C = ' ';   // Space
+        static const char SQ_C = '\'';  // Single quote
+        static const char DQ_C = '\"';  // Double quote
+        static const char TB_C = '\t';  // Tabulator
+        static const char NL_C = '\n';  // Newline
+        static const char CR_C = '\r';  // Carriage return
+        static const char BS_C = '\\';  // Backslash
         static const container SP;
         static const container UNQUOTED_KEY_CHAR;
         static const container UNQUOTED_VALUE_CHAR;
         static const container UNQUOTED_COMMENT_CHAR;
+        static const std::vector<std::pair<char, char>> ESCAPED_EQUIVALENCES;
 
     };
 
@@ -438,6 +484,21 @@ namespace dotenv
         container::CHAR_MODE::EXCLUDE,
         NL_C,
         CR_C
+    };
+
+    const std::vector<std::pair<char, char>> parser::ESCAPED_EQUIVALENCES
+    {
+        { '?' , '?'  },
+        { '\'', '\'' },
+        { '"' , '"'  },
+        { '\\', '\\' },
+        { 'a' , '\a' },
+        { 'b' , '\b' },
+        { 'f' , '\f' },
+        { 'n' , '\n' },
+        { 'r' , '\r' },
+        { 't' , '\t' },
+        { 'v' , '\v' }
     };
 
     class dotenv

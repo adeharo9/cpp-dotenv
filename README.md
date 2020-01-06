@@ -1,6 +1,6 @@
 # cpp-dotenv
 
-![version 0.1.0](https://img.shields.io/badge/version-0.1.0-blue)
+![version 0.2.0](https://img.shields.io/badge/version-0.2.0-blue)
 
 C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from `.env` for C++ projects.
 
@@ -186,4 +186,3 @@ For the geeks, you can check the grammar I've implemented on the `grammar/env.g4
 The complete list of issues con be consulted at the [issues page](https://github.com/adeharo9/cpp-dotenv/issues).
 
 1. [Variable resolution on values not yet vailable](https://github.com/adeharo9/cpp-dotenv/issues/3)
-2. Scaped sequences not being scaped inside strings
