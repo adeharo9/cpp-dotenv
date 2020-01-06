@@ -46,9 +46,9 @@ auto& dotenv = env; // 'auto' here is 'dotenv::dotenv'
 
 ```cmake
 add_subdirectory(cpp-dotenv)
+```
 
-...
-
+```cmake
 target_link_libraries(YOUR_TARGET ${CPP_DOTENV_LIB})
 ```
 
