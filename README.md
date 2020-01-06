@@ -49,10 +49,10 @@ add_subdirectory(cpp-dotenv)
 
 ...
 
-target_link_libraries(YOUR_TARGET PUBLIC ${CPP_DOTENV_LIB})
+target_link_libraries(YOUR_TARGET ${CPP_DOTENV_LIB})
 ```
 
-After this, you might use the library as described in [usage](#usage).
+After this, you might use the library as described in [usage](#usage); no extra scoping, no need to worry about the project's directory structure.
 
 ## Examples
 
