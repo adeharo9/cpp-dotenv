@@ -183,6 +183,6 @@ For the geeks, you can check the grammar I've implemented on the `grammar/env.g4
 
 ## Known issues
 
-The complete list of issues con be consulted at the [issues page](https://github.com/adeharo9/cpp-dotenv/issues).
+The complete list of issues can be consulted at the [issues page](https://github.com/adeharo9/cpp-dotenv/issues).
 
 1. [Variable resolution on values not yet vailable](https://github.com/adeharo9/cpp-dotenv/issues/3)
