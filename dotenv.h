@@ -189,14 +189,14 @@ namespace dotenv
             {
                 bind(_key);
                 UNQUOTED_KEY();
-                unbind(_key);
+                unbind();
             }
             else if (token_is(SQ_C))
             {
                 match(SQ_C);
                 bind(_key);
                 SINGLE_UNQUOTED_STRING();
-                unbind(_key);
+                unbind();
                 match(SQ_C);
             }
             else if (token_is(DQ_C))
@@ -204,7 +204,7 @@ namespace dotenv
                 match(DQ_C);
                 bind(_key);
                 DOUBLE_UNQUOTED_STRING();
-                unbind(_key);
+                unbind();
                 match(DQ_C);
             }
             else { syntax_err(); }
@@ -220,14 +220,14 @@ namespace dotenv
             {
                 bind(_value);
                 UNQUOTED_VALUE();
-                unbind(_value);
+                unbind();
             }
             else if (token_is(SQ_C))
             {
                 match(SQ_C);
                 bind(_value);
                 SINGLE_UNQUOTED_STRING();
-                unbind(_value);
+                unbind();
                 match(SQ_C);
             }
             else if (token_is(DQ_C))
@@ -235,7 +235,7 @@ namespace dotenv
                 match(DQ_C);
                 bind(_value);
                 DOUBLE_UNQUOTED_STRING();
-                unbind(_value);
+                unbind();
                 match(DQ_C);
             }
 
@@ -394,7 +394,7 @@ namespace dotenv
             bond = true;
         }
 
-        inline void unbind(std::string& s)
+        inline void unbind()
         {
             binded = nullptr;
             bond = false;
