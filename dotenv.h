@@ -8,6 +8,10 @@
 #include <vector>
 
 
+#if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__) || defined(WIN32)
+    #define OS_WIN
+#endif
+
 #if defined(_DEBUG) || defined(__DEBUG)
     #include <iostream>
 
@@ -410,6 +414,28 @@ namespace dotenv
 
     private:
 
+    #ifdef OS_WIN
+        static int setenv(const char* name, const char* value, int overwrite)
+        {
+            int errcode = 0;
+
+            if (overwrite == 0)
+            {
+                size_t envsize = 0;
+                errcode = getenv_s(&envsize, nullptr, 0, name);
+
+                if (errcode != 0 or envsize != 0)
+                {
+                    return errcode;
+                }
+            }
+
+            return _putenv_s(name, value);
+        }
+    #endif
+
+    private:
+
         bool overwrite = false;
 
         char token;
@@ -510,10 +536,10 @@ namespace dotenv
 
     public:
 
-        inline dotenv& load_dotenv(const std::string& full_path = env_filename, const bool overwrite = false)
+        inline dotenv& load_dotenv(const std::string& dotenv_path = env_filename, const bool overwrite = false)
         {
             std::ifstream env_file;
-            env_file.open(full_path);
+            env_file.open(dotenv_path);
 
             if (env_file.good())
             {
@@ -525,9 +551,9 @@ namespace dotenv
         }
 
         [[deprecated("Replaced by load_dotenv()")]]
-        inline dotenv& config(const std::string& full_path = env_filename)
+        inline dotenv& config(const std::string& dotenv_path = env_filename)
         {
-            return load_dotenv(full_path);
+            return load_dotenv(dotenv_path);
         }
 
         inline const value_type operator[](const key_type& k) const
