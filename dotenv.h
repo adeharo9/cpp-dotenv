@@ -25,6 +25,26 @@
 
 namespace dotenv
 {
+    #ifdef OS_WIN
+        int setenv(const char* name, const char* value, int overwrite)
+        {
+            int errcode = 0;
+
+            if (overwrite == 0)
+            {
+                size_t envsize = 0;
+                errcode = getenv_s(&envsize, nullptr, 0, name);
+
+                if (errcode != 0 or envsize != 0)
+                {
+                    return errcode;
+                }
+            }
+
+            return _putenv_s(name, value);
+        }
+    #endif
+
     class syntax_error: public std::runtime_error
     {
     public:
@@ -411,28 +431,6 @@ namespace dotenv
 
             setenv(_key.c_str(), _value.c_str(), overwrite ? 1 : 0);
         }
-
-    private:
-
-    #ifdef OS_WIN
-        static int setenv(const char* name, const char* value, int overwrite)
-        {
-            int errcode = 0;
-
-            if (overwrite == 0)
-            {
-                size_t envsize = 0;
-                errcode = getenv_s(&envsize, nullptr, 0, name);
-
-                if (errcode != 0 or envsize != 0)
-                {
-                    return errcode;
-                }
-            }
-
-            return _putenv_s(name, value);
-        }
-    #endif
 
     private:
 
