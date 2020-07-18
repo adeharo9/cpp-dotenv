@@ -1,6 +1,6 @@
 # cpp-dotenv
 
-![version 0.2.0](https://img.shields.io/badge/version-0.2.0-blue)
+![version 0.2.1](https://img.shields.io/badge/version-0.2.1-blue)
 
 C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from `.env` for C++ projects.
 
