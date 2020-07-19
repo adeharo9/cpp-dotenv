@@ -1,4 +1,4 @@
-grammar dotenv;
+grammar Dotenv;
 
 //////////////////
 // Parser rules //
@@ -9,26 +9,33 @@ dotenv
     ;
 
 line_content
-    : (EXPORT? kv_pair)? COMMENT?
+    : kv_pair
+    |
     ;
 
 kv_pair
-    : key EQ value?
+    : key EQ value
     ;
 
 key
-    : UNQUOTED_KEY
+    : UNQUOTED_STRING
     | STRING
     ;
 
 value
-    : UNQUOTED_VALUE
+    : UNQUOTED_STRING
     | STRING
+    |
     ;
 
 /////////////////
 // Lexer rules //
 /////////////////
+
+EQ: '=';
+NL: '\r'? '\n';
+WS: [ \t]+ -> skip;
+EXPORT: 'export' -> skip;
 
 COMMENT
     : '#' COMMENT_STRING? -> skip
@@ -39,13 +46,7 @@ STRING
     | '"' DOUBLE_UNQUOTED_STRING? '"'
     ;
 
-UNQUOTED_KEY: ~[#="' \t\n\r]+;
-UNQUOTED_VALUE: ~[#"' \t\n\r]+;
-
-EQ: '=';
-NL: '\r'? '\n' -> skip;
-WS: [ \t\r\n]+ -> skip;
-EXPORT: 'export' -> skip;
+UNQUOTED_STRING: ~[#="' \t\r\n]+;
 
 fragment COMMENT_STRING: ~[\r\n]+;
 fragment SINGLE_UNQUOTED_STRING: ~[']+;
