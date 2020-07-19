@@ -9,7 +9,7 @@ dotenv
     ;
 
 line_content
-    : kv_pair? COMMENT?
+    : (EXPORT? kv_pair)? COMMENT?
     ;
 
 kv_pair
@@ -45,6 +45,7 @@ UNQUOTED_VALUE: ~[#"' \t\n\r]+;
 EQ: '=';
 NL: '\r'? '\n' -> skip;
 WS: [ \t\r\n]+ -> skip;
+EXPORT: 'export' -> skip;
 
 fragment COMMENT_STRING: ~[\r\n]+;
 fragment SINGLE_UNQUOTED_STRING: ~[']+;
