@@ -5,25 +5,25 @@ grammar Dotenv;
 //////////////////
 
 dotenv
-    : line_content (NL line_content)* EOF
+    : line (NL line)* EOF
     ;
 
-line_content
-    : kv_pair
-    |
+line
+    : WS? pair WS?  # lineContent
+    | WS?           # emptyLine
     ;
 
-kv_pair
-    : key EQ value
+pair
+    : key WS? EQ WS? value
     ;
 
 key
-    : UNQUOTED_STRING
-    | STRING
+    : (export_token=UNQUOTED_STRING WS)? key_unquoted=UNQUOTED_STRING
+    | key_string=STRING
     ;
 
 value
-    : UNQUOTED_STRING
+    : UNQUOTED_STRING (WS UNQUOTED_STRING)*
     | STRING
     |
     ;
@@ -34,8 +34,7 @@ value
 
 EQ: '=';
 NL: '\r'? '\n';
-WS: [ \t]+ -> skip;
-EXPORT: 'export' -> skip;
+WS: [ \t]+;
 
 COMMENT
     : '#' COMMENT_STRING? -> skip
