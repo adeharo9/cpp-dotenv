@@ -2,7 +2,9 @@
 
 ![version 4.8](https://img.shields.io/badge/version-4.8-blue "version 4.8")
 
-This project holds a copy of the [ANTLR4 C++ runtime](https://github.com/antlr/antlr4/tree/4.8/runtime/Cpp) as an independent repository, in order to be imported as submodule or subtree and to be linked to by means of CMake targets.
+This project holds a copy of the [ANTLR4 C++ runtime](https://github.com/antlr/antlr4/tree/4.8/runtime/Cpp) as a standalone library, in order to be imported and to be linked to by means of CMake targets.
+
+The source code under the `runtime/src` directory comes directly from the [official ANTLR4 C++ runtime](https://github.com/antlr/antlr4/tree/4.8/runtime/Cpp).
 
 This version of the ANTLR4 C++ runtime **is intended to**:
 
@@ -25,38 +27,47 @@ This version of the ANTLR4 C++ runtime **is not intended to**:
 
 ## Supported versions
 
-The `master` branch is always up-to-date to the latest tag available on this repository.
+The `master` branch on this repository is always (at least) up-to-date with the latest tag available, and thus is stable.
 
-The following tags are available:
+Tag versions correspond to those on the [official ANTLR4 repository](https://github.com/antlr/antlr4). The following tags are available:
 
-- 4.8
+- [4.8](https://github.com/adeharo9/antlr4-cpp-runtime/tree/4.8)
 
 ## Dependencies
 
-- Compiler with support for C++11
-- CMake (>=3.0)
-- Make
+- C++ compiler with support for (at least) C++11
+- [CMake](https://cmake.org/) (>=3.0)
+- [Make](https://www.gnu.org/software/make/)
 
 ## Installation
 
-Simply add this repository as submodule or subtree in your own project's structure.
+This library is standalone and autocontained; it does not have any dependencies on external libraries. To start using it, simply add this repository as a subtree or submodule in your own project's structure.
 
 ## Build
 
 Supported build methods are:
 
-- CMake
+- [CMake](#cmake)
 
 ### CMake
 
-Simply add the subdirectory where this repository resides. The symbol `ANTLR4_CPP_RUNTIME` will be available; it is autocontained and simply needs to be linked to in your own targets, wherever an ANTLR4 header is used. No need to include directories.
+To configure building with CMake, simply add the subdirectory where this repository resides in your `CMakeLists.txt` file. The symbol `ANTLR4_CPP_RUNTIME` will be available; it is autocontained and simply needs to be linked to in your own targets, wherever an ANTLR4 header is used. No need to further action, nor to include any directories.
 
 ```cmake
 add_subdirectory(antlr4-cpp-runtime)
 
 ...
 
-target_link_libraries(${YOUR_OWN_LIB_OR_EXE}
+target_link_libraries(YOUR_TARGET
     ${ANTLR4_CPP_RUNTIME}
 )
 ```
+
+After this, simply build as usual:
+
+```shell
+mkdir build && cd build
+cmake .. && make -j
+```
+
+Since the runtime takes quite a while to compile, consider building with `make -j` to speed up the process.
