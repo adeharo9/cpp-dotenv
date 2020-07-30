@@ -468,7 +468,7 @@ namespace dotenv
     };
 
 
-    const container parser::SP
+    inline const container parser::SP
     {
         container::CHAR_MODE::INCLUDE,
         SP_C,
@@ -476,7 +476,7 @@ namespace dotenv
     };
 
 
-    const container parser::UNQUOTED_KEY_CHAR
+    inline const container parser::UNQUOTED_KEY_CHAR
     {
         container::CHAR_MODE::EXCLUDE,
         CS_C,
@@ -490,7 +490,7 @@ namespace dotenv
     };
 
 
-    const container parser::UNQUOTED_VALUE_CHAR
+    inline const container parser::UNQUOTED_VALUE_CHAR
     {
         container::CHAR_MODE::EXCLUDE,
         CS_C,
@@ -503,14 +503,14 @@ namespace dotenv
     };
 
 
-    const container parser::UNQUOTED_COMMENT_CHAR
+    inline const container parser::UNQUOTED_COMMENT_CHAR
     {
         container::CHAR_MODE::EXCLUDE,
         NL_C,
         CR_C
     };
 
-    const std::vector<std::pair<char, char>> parser::ESCAPED_EQUIVALENCES
+    inline const std::vector<std::pair<char, char>> parser::ESCAPED_EQUIVALENCES
     {
         { '?' , '?'  },
         { '\'', '\'' },
@@ -594,9 +594,9 @@ namespace dotenv
     };
 
 
-    const std::string dotenv::env_filename = ".env";
-    dotenv dotenv::_instance;
+    inline const std::string dotenv::env_filename = ".env";
+    inline dotenv dotenv::_instance;
 
 
-    dotenv& env = dotenv::instance().load_dotenv();
+    inline dotenv& env = dotenv::instance().load_dotenv();
 }
