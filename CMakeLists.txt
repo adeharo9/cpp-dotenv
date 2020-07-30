@@ -5,6 +5,10 @@ project(cpp-dotenv VERSION 0.3.0)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#------------------- SUBDIRECTORY ADDITION ------------------------------------
+
+add_subdirectory(common)
+
 #----------------------- LIBRARY CONFIGURATION -------------------------
 
 set(CPP_DOTENV_LIB cpp_dotenv CACHE INTERNAL "")
