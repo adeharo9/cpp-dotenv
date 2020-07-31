@@ -36,7 +36,6 @@
 
 # Project specifics
 *.env
-*.cpp
 
 # VSCode specifics
 .vscode/
