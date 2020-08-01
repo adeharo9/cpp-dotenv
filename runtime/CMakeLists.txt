@@ -1,5 +1,6 @@
-#------------------- FILE IDENTIFICATION --------------------------------------
+#------------------- LIBRARY CONFIGURATION ------------------------------------
 
+set(ANTLR4_CPP_RUNTIME antlr4_cpp_runtime CACHE INTERNAL "")
 set(ANTLR4_CPP_RUNTIME_SRC
     src/ANTLRErrorListener.cpp
     src/ANTLRErrorListener.h
@@ -308,19 +309,11 @@ set(ANTLR4_CPP_RUNTIME_SRC
     src/tree/xpath/XPathWildcardElement.h
 )
 
-#------------------- LIBRARY DECLARATION --------------------------------------
-
-set(ANTLR4_CPP_RUNTIME antlr4_cpp_runtime CACHE INTERNAL "")
-
 add_library(${ANTLR4_CPP_RUNTIME} ${ANTLR4_CPP_RUNTIME_SRC})
-
-#------------------- INCLUDE DIRECTORIES TO SEARCH PATH -----------------------
 
 target_include_directories(${ANTLR4_CPP_RUNTIME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-
-#------------------- COMPILATION OPTIONS --------------------------------------
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
     target_compile_options(${ANTLR4_CPP_RUNTIME} PRIVATE

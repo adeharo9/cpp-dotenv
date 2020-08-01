@@ -4,8 +4,6 @@ project(antlr4-cpp-runtime VERSION 4.8)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#------------------- COMPILATION FLAGS ----------------------------------------
-
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
     set(CMAKE_BUILD_TYPE RELEASE)
 else()
