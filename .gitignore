@@ -36,7 +36,6 @@
 
 # Project specifics
 *.env
-tests/
 
 # VSCode specifics
 .vscode/
