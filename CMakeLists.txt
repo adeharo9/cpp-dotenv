@@ -36,3 +36,13 @@ target_link_libraries(${CPP_DOTENV_LIB}
 target_include_directories(${CPP_DOTENV_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+    target_compile_options(${CPP_DOTENV_LIB} PRIVATE
+        -g -Wall -O0
+    )
+else()
+    target_compile_options(${CPP_DOTENV_LIB} PRIVATE
+        -O3
+    )
+endif()
