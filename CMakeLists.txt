@@ -16,19 +16,23 @@ message(STATUS "Building CPP-DOTENV in ${CMAKE_BUILD_TYPE} mode")
 
 add_subdirectory(common)
 add_subdirectory(antlr)
+add_subdirectory(src)
 
 #----------------------- LIBRARY CONFIGURATION --------------------------------
 
 set(CPP_DOTENV_LIB cpp_dotenv CACHE INTERNAL "")
 set(CPP_DOTENV_SRC
-    dotenv.h
+    src/dotenv.cpp
+    include/dotenv.h
 )
 
 add_library(${CPP_DOTENV_LIB} ${CPP_DOTENV_SRC})
-set_target_properties(${CPP_DOTENV_LIB} PROPERTIES
-    LINKER_LANGUAGE CXX
+
+target_link_libraries(${CPP_DOTENV_LIB}
+    ${ENVIRON_LIB}
+    ${PARSER_LIB}
 )
 
 target_include_directories(${CPP_DOTENV_LIB} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
