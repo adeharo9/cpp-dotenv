@@ -9,7 +9,7 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
 else()
     string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 endif()
-message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode")
+message(STATUS "Building ANTLR4-CPP-RUNTIME in ${CMAKE_BUILD_TYPE} mode")
 
 #------------------- SUBDIRECTORY ADDITION ------------------------------------
 
