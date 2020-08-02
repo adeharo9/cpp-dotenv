@@ -1,8 +1,6 @@
 #pragma once
 
 
-#include "antlr4-runtime.h"
-
 #include <fstream>
 
 
@@ -19,7 +17,7 @@ namespace dotenv
     private:
 
         bool overwrite;
-        antlr4::ANTLRInputStream is;
+        std::istream& is;
 
     };
 }

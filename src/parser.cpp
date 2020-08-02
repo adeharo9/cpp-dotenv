@@ -6,14 +6,14 @@
 #include "DotenvLexer.h"
 #include "DotenvParser.h"
 
-#include <iostream>
-using namespace std;
+#include "antlr4-runtime.h"
 
 using namespace antlr4;
 using namespace dotenv;
+using namespace std;
 
 
-parser::parser(std::istream& is, const bool overwrite):
+parser::parser(istream& is, const bool overwrite):
     overwrite(overwrite),
     is(is)
 {
@@ -22,13 +22,10 @@ parser::parser(std::istream& is, const bool overwrite):
 
 void parser::parse()
 {
-    cout << "1" << endl;
-    DotenvLexer lexer(&is);
-    cout << "2" << endl;
+    ANTLRInputStream input(is);
+    DotenvLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
-    cout << "3" << endl;
     tokens.fill();
-    cout << "4" << endl;
 
     DotenvParser parser(&tokens);
     tree::ParseTree* tree = parser.dotenv();
