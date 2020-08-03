@@ -21,7 +21,7 @@ C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) projec
 
 ## Dependencies
 
-**NONE**, for sure! :sunglasses: If it had, it wouldn't follow the basic dotenv principles.
+**NONE**, for sure! :sunglasses: If it had, it wouldn't follow the basic dotenv principles. All the needed libraries are shipped with this repository right out of the box.
 
 ## Usage
 
@@ -37,7 +37,15 @@ For the sake of simplycity (and if your project namespace density allows to), yo
 using namespace dotenv;
 ```
 
-For convenience, **cpp-dotenv** auto-configures a class object (which is instance of the singleton class `dotenv`) by calling the `load_dotenv()` method at the very beginning of your file (just right before the end of `dotenv.h`) and trying to load a `.env` file, although if you need to add-in your own files (like `.myenv`), simply re-run the loading step passing the file name as parameter; everything new will show up on the `dotenv` instances.
+In order to bring your environment variables from your configuration files, simply make as many calls to the `load_dotenv(const std::string& dotenv_path)` function as needed with the appropriate paths (either relative or absolute).
+
+```cpp
+env.load_dotenv();
+```
+
+Not passing any parameter to the function is equivalent to tell **cpp-dotenv** to search for a file named `.env` at the same level as the executable that is making the call to the function.
+
+---
 
 By default, already-defined environment variables are not overwritten even if redefined in some of the loaded files. This behavior can be changed, however, by calling the `load_config()` function with the `overwrite` parameter set to `true`. For an example, take a look at [this one](#several-dotenv-files).
 
@@ -89,6 +97,7 @@ using namespace std;
 
 int main()
 {
+    env.load_dotenv();
     cout << "DB_NAME: " << env["DB_NAME"] << endl;
     cout << "eval \"" << env["COMMAND"] << " " << env["HOST"] << "\"" << endl;
 }
@@ -104,7 +113,7 @@ $ ./main
 
 ### Reference renaming
 
-Assuming the same `.env` file as in the [previous case](#basic-usage), the predefined `env` reference can be easily renamed and used just exactly as the original one.
+Assuming the same `.env` file as in the [previous case](#basic-usage), the predefined `env` reference can be easily renamed and used just exactly as the original one. The `load_dotenv()` function also returns a reference to the object it is being applied to, so it can be easily nested in a case like this.
 
 The following code:
 
@@ -116,7 +125,7 @@ using namespace std;
 
 int main()
 {
-    auto& dotenv = dotenv::env;
+    auto& dotenv = dotenv::env.load_dotenv();
     cout << "DB_NAME: " << dotenv["DB_NAME"] << endl;
     cout << "eval \"" << dotenv["COMMAND"] << " " << dotenv["HOST"] << "\"" << endl;
 }
@@ -132,7 +141,7 @@ $ ./main
 
 ### Several dotenv files
 
-The situation of having several different dotenv files is no stranger one (`.env` for private configuration variables, `.pubenv` for public variables, etc.). Loading several files in addition to the default one and overwritting any variables that are redefined on the files can be done as follows:
+The situation of having several different dotenv files is no stranger one (`.env` for private configuration variables, `.pubenv` for public variables, etc.). Loading several files and overwritting any variables that are redefined on the files can be done as follows:
 
 Assume the following `.env` file:
 
@@ -179,7 +188,7 @@ $ ./main
 
 ## Grammar
 
-For the geeks, you can check the grammar I've implemented on the `grammar/dotenv.g4` file. Despite being written in an ANTLR4 fashion, I've implemented a simple recursive parser myself given the basic nature of the language. The parser and its methods are publicly available under the `dotenv::parser` class.
+For the geeks, you can check the grammars I've implemented on the `antlr/grammar/` directory.
 
 ## Known issues
 
