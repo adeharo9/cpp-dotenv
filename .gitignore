@@ -31,5 +31,8 @@
 *.out
 *.app
 
-# CMake files
+# VSCode specifics
+.vscode/
+
+# CMake specifics
 build/
