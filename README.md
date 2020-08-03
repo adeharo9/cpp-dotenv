@@ -57,14 +57,14 @@ auto& dotenv = env; // 'auto' here is 'dotenv::dotenv'
 
 ### CMake
 
-`cpp-dotenv` also comes with support for `CMake` right out of the box. In order to use it, simply include this repository's directory and link the `CPP_DOTENV_LIB` library to your own targets where needed:
+`cpp-dotenv` also comes with support for `CMake` right out of the box. In order to use it, simply include this repository's directory and link the `cpp_dotenv` target to your own targets where needed (the target is also available under the symbol `CPP_DOTENV`):
 
 ```cmake
 add_subdirectory(cpp-dotenv)
 ```
 
 ```cmake
-target_link_libraries(YOUR_TARGET ${CPP_DOTENV_LIB})
+target_link_libraries(YOUR_TARGET cpp_dotenv)
 ```
 
 After this, you might use the library as described in [usage](#usage); no extra scoping, no need to worry about the project's directory structure.

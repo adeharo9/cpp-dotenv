@@ -20,29 +20,29 @@ add_subdirectory(src)
 
 #----------------------- LIBRARY CONFIGURATION --------------------------------
 
-set(CPP_DOTENV_LIB cpp_dotenv CACHE INTERNAL "")
+set(CPP_DOTENV cpp_dotenv CACHE INTERNAL "")
 set(CPP_DOTENV_SRC
     src/dotenv.cpp
     include/dotenv.h
 )
 
-add_library(${CPP_DOTENV_LIB} ${CPP_DOTENV_SRC})
+add_library(${CPP_DOTENV} ${CPP_DOTENV_SRC})
 
-target_link_libraries(${CPP_DOTENV_LIB}
+target_link_libraries(${CPP_DOTENV}
     ${ENVIRON_LIB}
     ${PARSER_LIB}
 )
 
-target_include_directories(${CPP_DOTENV_LIB} PUBLIC
+target_include_directories(${CPP_DOTENV} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
-    target_compile_options(${CPP_DOTENV_LIB} PRIVATE
+    target_compile_options(${CPP_DOTENV} PRIVATE
         -g -Wall -O0
     )
 else()
-    target_compile_options(${CPP_DOTENV_LIB} PRIVATE
+    target_compile_options(${CPP_DOTENV} PRIVATE
         -O3
     )
 endif()
