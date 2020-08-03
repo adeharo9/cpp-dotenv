@@ -51,15 +51,15 @@ Supported build methods are:
 
 ### CMake
 
-To configure building with CMake, simply add the subdirectory where this repository resides in your `CMakeLists.txt` file. The symbol `ANTLR4_CPP_RUNTIME` will be available; it is autocontained and simply needs to be linked to in your own targets, wherever an ANTLR4 header is used. No need to further action, nor to include any directories.
+To configure building with CMake, simply add the subdirectory where this repository resides in your `CMakeLists.txt` file. Both the target `antlr4_cpp_runtime` and the symbol `ANTLR4_CPP_RUNTIME` will be available; they are autocontained and simply need to be linked to in your own targets, wherever an ANTLR4 header is used. No need to further action, nor to include any directories.
 
 ```cmake
 add_subdirectory(antlr4-cpp-runtime)
+```
 
-...
-
+```cmake
 target_link_libraries(YOUR_TARGET
-    ${ANTLR4_CPP_RUNTIME}
+    antlr4_cpp_runtime
 )
 ```
 
