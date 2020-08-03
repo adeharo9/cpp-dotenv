@@ -60,4 +60,4 @@ void dotenv::dotenv::parse(ifstream& file, const bool overwrite)
 const string dotenv::dotenv::env_filename = ".env";
 dotenv::dotenv dotenv::dotenv::_instance;
 
-dotenv::dotenv& dotenv::env = dotenv::instance().load_dotenv();
+dotenv::dotenv& dotenv::env = dotenv::instance();
