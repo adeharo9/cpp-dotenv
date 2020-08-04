@@ -7,8 +7,6 @@ C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) projec
 
 **Please take into account this is still a developing project.**
 
-**cpp-dotenv** is implemented as a single C++ header file, so there is no need to compile nor to add complex file dependencies to your project. Simply include the header file wherever you want to use it and ta-da!, you're done.
-
 ## Table of contents
 
 1. [Dependencies](#dependencies)
