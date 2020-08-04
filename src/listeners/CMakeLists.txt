@@ -9,7 +9,7 @@ set(LISTENERS_SRC
 add_library(${LISTENERS_LIB} ${LISTENERS_SRC})
 
 target_link_libraries(${LISTENERS_LIB}
-    ${DOTENV_PARSER_LIB}
+    ${DOTENV_GENERATED_LIB}
     ${STRUCTURES_LIB}
 )
 

@@ -16,7 +16,7 @@ add_library(${PARSER_LIB} ${PARSER_SRC})
 
 target_link_libraries(${PARSER_LIB}
     ${ANTLR4_CPP_RUNTIME}
-    ${DOTENV_PARSER_LIB}
+    ${DOTENV_GENERATED_LIB}
     ${LISTENERS_LIB}
     ${STRUCTURES_LIB}
 )
