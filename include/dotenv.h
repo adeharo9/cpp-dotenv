@@ -16,7 +16,7 @@ namespace dotenv
 
     public:
 
-        dotenv& load_dotenv(const std::string& dotenv_path = env_filename, const bool overwrite = false);
+        dotenv& load_dotenv(const std::string& dotenv_path = env_filename, const bool overwrite = false, const bool interpolate = true);
         [[deprecated("Replaced by load_dotenv()")]]
         dotenv& config(const std::string& dotenv_path = env_filename, const bool overwrite = false);
 
@@ -30,8 +30,6 @@ namespace dotenv
     private:
 
         dotenv() = default;
-
-        void parse(std::ifstream& file, const bool overwrite = false);
 
     private:
 

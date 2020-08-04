@@ -10,14 +10,15 @@ using namespace std;
 using namespace dotenv;
 
 
-dotenv::dotenv& dotenv::dotenv::load_dotenv(const string& dotenv_path, const bool overwrite)
+dotenv::dotenv& dotenv::dotenv::load_dotenv(const string& dotenv_path, const bool overwrite, const bool interpolate)
 {
     ifstream env_file;
     env_file.open(dotenv_path);
 
     if (env_file.good())
     {
-        parse(env_file, overwrite);
+        Parser parser(env_file, overwrite, interpolate);
+        parser.parse();
         env_file.close();
     }
 
@@ -47,13 +48,6 @@ const dotenv::dotenv::value_type dotenv::dotenv::operator[](const key_type& k) c
 dotenv::dotenv& dotenv::dotenv::instance()
 {
     return _instance;
-}
-
-
-void dotenv::dotenv::parse(ifstream& file, const bool overwrite)
-{
-    Parser parser(file, overwrite);
-    parser.parse();
 }
 
 
