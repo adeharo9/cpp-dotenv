@@ -1,6 +1,7 @@
 # [C++ .ENV](https://github.com/adeharo9/cpp-dotenv)
 
-![version 0.3.0](https://img.shields.io/badge/version-0.3.0-blue)
+![version 0.3.0](https://img.shields.io/badge/version-0.3.0-blue "version 0.3.0")
+![BSD 3-clause license](https://img.shields.io/badge/license-BSD%203--clause-green "BSD 3-clause license")
 
 C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from `.env` files for C++ projects.
 
