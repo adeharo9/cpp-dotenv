@@ -1,7 +1,7 @@
 #include "dotenv.h"
 
 #include "environ.h"
-#include "parser.h"
+#include "Parser.h"
 
 #include <fstream>
 
@@ -52,7 +52,7 @@ dotenv::dotenv& dotenv::dotenv::instance()
 
 void dotenv::dotenv::parse(ifstream& file, const bool overwrite)
 {
-    parser parser(file, overwrite);
+    Parser parser(file, overwrite);
     parser.parse();
 }
 

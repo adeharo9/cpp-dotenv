@@ -8,8 +8,8 @@ add_subdirectory(listeners)
 
 set(PARSER_LIB parser CACHE INTERNAL "")
 set(PARSER_SRC
-    parser.cpp
-    parser.h
+    Parser.cpp
+    Parser.h
 )
 
 add_library(${PARSER_LIB} ${PARSER_SRC})
@@ -17,6 +17,8 @@ add_library(${PARSER_LIB} ${PARSER_SRC})
 target_link_libraries(${PARSER_LIB}
     ${ANTLR4_CPP_RUNTIME}
     ${DOTENV_GENERATED_LIB}
+    ${ENVIRON_LIB}
+    ${LINE_GENERATED_LIB}
     ${LISTENERS_LIB}
     ${STRUCTURES_LIB}
 )
