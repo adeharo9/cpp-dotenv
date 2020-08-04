@@ -26,12 +26,6 @@ dotenv::dotenv& dotenv::dotenv::load_dotenv(const string& dotenv_path, const boo
 }
 
 
-dotenv::dotenv& dotenv::dotenv::config(const string& dotenv_path, const bool overwrite)
-{
-    return load_dotenv(dotenv_path);
-}
-
-
 const dotenv::dotenv::value_type dotenv::dotenv::operator[](const key_type& k) const
 {
     const char* value = getenv(k.c_str());
