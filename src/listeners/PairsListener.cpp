@@ -1,9 +1,6 @@
 #include "PairsListener.h"
 
-#include <iostream>
 
-
-using namespace std;
 using namespace dotenv;
 
 
@@ -24,8 +21,6 @@ void PairsListener::enterPair(DotenvParser::PairContext* ctx)
 void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 {
     pairs_table.emplace(_key, _value);
-
-    cout << _key << " = " << pairs_table.at(_key) << endl;
 }
 
 
