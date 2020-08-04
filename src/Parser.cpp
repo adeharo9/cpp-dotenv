@@ -50,9 +50,7 @@ void dotenv::Parser::parse_dotenv()
     tree::ParseTree* tree = parser.dotenv();
 
     tree::ParseTreeWalker walker;
-
     PairsListener pairs_listener(pairs_table);
-
     walker.walk(&pairs_listener, tree);
 }
 
@@ -73,9 +71,7 @@ void dotenv::Parser::parse_line()
         tree::ParseTree* tree = parser.line();
 
         tree::ParseTreeWalker walker;
-
         // PairsListener pairs_listener(pairs_table);
-
         // walker.walk(&pairs_listener, tree);
     }
 }
