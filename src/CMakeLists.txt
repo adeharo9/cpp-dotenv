@@ -17,10 +17,12 @@ add_library(${PARSER_LIB} ${PARSER_SRC})
 target_link_libraries(${PARSER_LIB}
     ${ANTLR4_CPP_RUNTIME}
     ${DOTENV_GENERATED_LIB}
+    ${DOTENV_LISTENERS_LIB}
+    ${DOTENV_STRUCTURES_LIB}
     ${ENVIRON_LIB}
     ${LINE_GENERATED_LIB}
-    ${LISTENERS_LIB}
-    ${STRUCTURES_LIB}
+    ${LINE_LISTENERS_LIB}
+    ${LINE_STRUCTURES_LIB}
 )
 
 target_include_directories(${PARSER_LIB} PUBLIC

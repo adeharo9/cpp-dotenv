@@ -2,6 +2,7 @@
 
 
 #include "PairsTable.h"
+#include "SymbolsTable.h"
 
 #include <fstream>
 
@@ -33,6 +34,7 @@ namespace dotenv
         std::istream& is;
 
         PairsTable pairs_table;
+        SymbolsTable symbols_table;
 
     };
 }

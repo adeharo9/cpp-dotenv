@@ -1,6 +1,7 @@
 #include "Parser.h"
 
 #include "PairsListener.h"
+#include "SymbolsListener.h"
 
 #include "DotenvLexer.h"
 #include "DotenvParser.h"
@@ -71,8 +72,8 @@ void dotenv::Parser::parse_line()
         tree::ParseTree* tree = parser.line();
 
         tree::ParseTreeWalker walker;
-        // PairsListener pairs_listener(pairs_table);
-        // walker.walk(&pairs_listener, tree);
+        SymbolsListener symbols_listener(symbols_table);
+        walker.walk(&symbols_listener, tree);
     }
 }
 
