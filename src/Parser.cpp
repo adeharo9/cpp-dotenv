@@ -147,7 +147,7 @@ void dotenv::Parser::register_env() const
 
         if (record.local())
         {
-            setenv(key, record.value(), overwrite);
+            dotenv::setenv(key, record.value(), overwrite);
         }
     }
 }
