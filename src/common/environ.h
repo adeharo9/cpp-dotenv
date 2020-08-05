@@ -19,46 +19,15 @@
 
 
 #ifdef OS_WIN
-int setenv(const char *name, const char *value, int overwrite)
-{
-    int errcode = 0;
-
-    if (overwrite == 0)
-    {
-        size_t envsize = 0;
-        errcode = getenv_s(&envsize, nullptr, 0, name);
-
-        if (errcode != 0 or envsize != 0)
-        {
-            return errcode;
-        }
-    }
-
-    return _putenv_s(name, value);
-}
+int setenv(const char *name, const char *value, int overwrite);
 #endif
 
 
 namespace dotenv
 {
-    std::pair<bool, std::string> getenv(const std::string& name)
-    {
-        const char* value = ::getenv(name.c_str());
-        const bool success = value != nullptr;
-        
-        if (not success)
-        {
-            value = "";
-        }
+    std::pair<bool, std::string> getenv(const std::string& name);
 
-        return {success, value};
-    }
-
-
-    int setenv(const std::string& name, const std::string& value, bool overwrite)
-    {
-        return ::setenv(name.c_str(), value.c_str(), overwrite ? 1 : 0);
-    }
+    int setenv(const std::string& name, const std::string& value, bool overwrite);
 }
 
 
