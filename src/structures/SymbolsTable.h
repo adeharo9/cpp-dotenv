@@ -31,8 +31,8 @@ namespace dotenv
         void set_defined();
         void set_value(const std::string& value);
 
-        void add_one_dependency();
-        void resolve_one();
+        void dependency_add_one();
+        void dependency_resolve_one();
 
     private:
 

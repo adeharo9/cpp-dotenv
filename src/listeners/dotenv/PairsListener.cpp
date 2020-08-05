@@ -23,12 +23,16 @@ void PairsListener::enterPair(DotenvParser::PairContext* ctx)
 
 void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 {
+    // If overwrite is turned off and the environment variable already
+    // exists, do not record it on the symbols table
+    // Later on, during resolution, it will be brought from the external
+    // environment, just as expected
     if (not overwrite and getenv(_key).first)
     {
         return;
     }
 
-    SymbolRecord record(true, true);
+    SymbolRecord record;
     record.set_value(_value);
 
     symbols_table.emplace(_key, record);

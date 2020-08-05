@@ -15,12 +15,6 @@ SymbolsInitializerListener::SymbolsInitializerListener(const string& key, Symbol
 }
 
 
-void SymbolsInitializerListener::enterVariable(LineParser::VariableContext* ctx)
-{
-
-}
-
-
 void SymbolsInitializerListener::exitVariable(LineParser::VariableContext* ctx)
 {
     string var_name;
@@ -39,7 +33,7 @@ void SymbolsInitializerListener::exitVariable(LineParser::VariableContext* ctx)
 
     // If the symbol does not exist on the table, it is not local (i.e. it is
     // defined on the outer environment)
-    // Retrieve from the environment and register it in the symbols table
+    // Retrieve it from the environment and register it in the symbols table
     // If it does not exist, it will be retrieved as an empty string
     if (symbols_table.find(var_name) == symbols_table.end())
     {
@@ -48,5 +42,6 @@ void SymbolsInitializerListener::exitVariable(LineParser::VariableContext* ctx)
         symbols_table.emplace(var_name, var);
     }
 
-    symbols_table.at(key).add_one_dependency();
+    // Add one dependency
+    symbols_table.at(key).dependency_add_one();
 }

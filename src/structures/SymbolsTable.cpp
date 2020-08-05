@@ -20,6 +20,7 @@ SymbolRecord::SymbolRecord(const bool declared,
 
 bool SymbolRecord::complete() const
 {
+    // A complete symbol is a declared, defined and resolved one
     return _declared and _defined and _num_depends == 0;
 }
 
@@ -38,6 +39,7 @@ bool SymbolRecord::defined() const
 
 bool SymbolRecord::resolved() const
 {
+    // I.e. no dependencies
     return _num_depends == 0;
 }
 
@@ -74,6 +76,8 @@ void SymbolRecord::set_defined()
 
 void SymbolRecord::set_value(const string& value)
 {
+    // Despite maybe not being resolved, value implies declaration and
+    // definition
     if (not _declared)
     {
         _declared = true;
@@ -88,14 +92,15 @@ void SymbolRecord::set_value(const string& value)
 }
 
 
-void SymbolRecord::add_one_dependency()
+void SymbolRecord::dependency_add_one()
 {
     ++_num_depends;
 }
 
 
-void SymbolRecord::resolve_one()
+void SymbolRecord::dependency_resolve_one()
 {
+    // Make sure to avoid underflow
     if (_num_depends > 0)
     {
         --_num_depends;

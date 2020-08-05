@@ -13,12 +13,6 @@ SymbolsResolverListener::SymbolsResolverListener(const string& key, SymbolsTable
 }
 
 
-void SymbolsResolverListener::enterVariable(LineParser::VariableContext* ctx)
-{
-
-}
-
-
 void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
 {
     size_t pos;
@@ -30,6 +24,7 @@ void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
     {
         var_name += ctx->BOUNDED_VARIABLE()->getText();
 
+        // Start position of the variable substring in the line
         pos = ctx->BOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
         size = var_name.size();
 
@@ -39,6 +34,7 @@ void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
     {
         var_name += ctx->UNBOUNDED_VARIABLE()->getText();
 
+        // Start position of the variable substring in the line
         pos = ctx->UNBOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
         size = var_name.size();
 
@@ -54,7 +50,9 @@ void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
     {
         SymbolRecord& key_var = symbols_table.at(this->key);
 
+        // Delete the old variable substring, insert the new one and mark it
+        // as resolved
         key_var.value().erase(pos, size).insert(pos, var.value());
-        key_var.resolve_one();
+        key_var.dependency_resolve_one();
     }
 }
