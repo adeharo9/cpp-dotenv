@@ -10,7 +10,8 @@ add_library(${DOTENV_LISTENERS_LIB} ${DOTENV_LISTENERS_SRC})
 
 target_link_libraries(${DOTENV_LISTENERS_LIB}
     ${DOTENV_GENERATED_LIB}
-    ${DOTENV_STRUCTURES_LIB}
+    ${ENVIRON_LIB}
+    ${STRUCTURES_LIB}
 )
 
 target_include_directories(${DOTENV_LISTENERS_LIB} PUBLIC

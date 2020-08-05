@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "PairsTable.h"
+// #include "PairsTable.h"
 #include "SymbolsTable.h"
 
 #include <fstream>
@@ -33,7 +33,9 @@ namespace dotenv
         bool overwrite;
         std::istream& is;
 
-        PairsTable pairs_table;
+        size_t unresolved;
+
+        // PairsTable pairs_table;
         SymbolsTable symbols_table;
 
     };

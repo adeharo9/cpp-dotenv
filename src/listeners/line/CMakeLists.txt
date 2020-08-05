@@ -2,15 +2,18 @@
 
 set(LINE_LISTENERS_LIB line_listeners CACHE INTERNAL "")
 set(LINE_LISTENERS_SRC
-    SymbolsListener.cpp
-    SymbolsListener.h
+    SymbolsInitializerListener.cpp
+    SymbolsInitializerListener.h
+    SymbolsResolverListener.cpp
+    SymbolsResolverListener.h
 )
 
 add_library(${LINE_LISTENERS_LIB} ${LINE_LISTENERS_SRC})
 
 target_link_libraries(${LINE_LISTENERS_LIB}
+    ${ENVIRON_LIB}
     ${LINE_GENERATED_LIB}
-    ${LINE_STRUCTURES_LIB}
+    ${STRUCTURES_LIB}
 )
 
 target_include_directories(${LINE_LISTENERS_LIB} PUBLIC

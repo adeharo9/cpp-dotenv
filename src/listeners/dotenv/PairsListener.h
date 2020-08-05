@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "PairsTable.h"
+#include "SymbolsTable.h"
 #include "DotenvBaseListener.h"
 #include "DotenvParser.h"
 
@@ -14,7 +14,7 @@ namespace dotenv
     {
     public:
 
-        PairsListener(PairsTable& pairs_table);
+        PairsListener(const bool overwrite, SymbolsTable& symbols_table);
 
         virtual void enterPair(DotenvParser::PairContext* ctx) override;
         virtual void exitPair(DotenvParser::PairContext* ctx) override;
@@ -27,7 +27,8 @@ namespace dotenv
         std::string _key;
         std::string _value;
 
-        PairsTable& pairs_table;
+        bool overwrite;
+        SymbolsTable& symbols_table;
 
     };
 }

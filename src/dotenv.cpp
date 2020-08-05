@@ -4,6 +4,7 @@
 #include "Parser.h"
 
 #include <fstream>
+#include <utility>
 
 
 using namespace std;
@@ -28,14 +29,7 @@ dotenv::dotenv& dotenv::dotenv::load_dotenv(const string& dotenv_path, const boo
 
 const dotenv::dotenv::value_type dotenv::dotenv::operator[](const key_type& k) const
 {
-    const char* value = getenv(k.c_str());
-    
-    if (value == nullptr)
-    {
-        value = "";
-    }
-
-    return value_type(value);
+    return getenv(k).second;
 }
 
 

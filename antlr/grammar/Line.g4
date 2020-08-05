@@ -13,8 +13,8 @@ content
     ;
 
 variable
-    : UNBOUNDED_VARIABLE
-    | BOUNDED_VARIABLE
+    : BOUNDED_VARIABLE
+    | UNBOUNDED_VARIABLE
     ;
 
 /////////////////

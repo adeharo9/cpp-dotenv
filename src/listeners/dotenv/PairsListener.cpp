@@ -1,11 +1,14 @@
 #include "PairsListener.h"
 
+#include "environ.h"
+
 
 using namespace dotenv;
 
 
-PairsListener::PairsListener(PairsTable& pairs_table):
-    pairs_table(pairs_table)
+PairsListener::PairsListener(const bool overwrite, SymbolsTable& symbols_table):
+    overwrite(overwrite),
+    symbols_table(symbols_table)
 {
 
 }
@@ -20,7 +23,15 @@ void PairsListener::enterPair(DotenvParser::PairContext* ctx)
 
 void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 {
-    pairs_table.emplace(_key, _value);
+    if (not overwrite and getenv(_key).first)
+    {
+        return;
+    }
+
+    SymbolRecord record(true, true);
+    record.set_value(_value);
+
+    symbols_table.emplace(_key, record);
 }
 
 
