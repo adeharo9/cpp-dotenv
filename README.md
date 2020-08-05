@@ -12,10 +12,12 @@ C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) projec
 1. [Dependencies](#dependencies)
 2. [Usage](#usage)
    1. [CMake](#cmake)
+   2. [Variable resolution](#variable-resolution)
 3. [Examples](#examples)
    1. [Basic usage](#basic-usage)
    2. [Reference renaming](#reference-renaming)
    3. [Several dotenv files](#several-dotenv-files)
+   4. [Variable resolution](#variable-resolution-1)
 4. [Grammar](#grammar)
 
 ## Dependencies
@@ -67,6 +69,16 @@ target_link_libraries(YOUR_TARGET cpp_dotenv)
 ```
 
 After this, you might use the library as described in [usage](#usage); no extra scoping, no need to worry about the project's directory structure.
+
+### Variable resolution
+
+Now **cpp-dotenv** by default resolves variables nested inside variable definitions in the parsed files, both with those defined in the file being loaded or already present in the environment itself.
+
+Variable reference with variables declared in the same file is order-independent: there's no need to worry about the declaration order of the variables, **cpp-dotenv** will resolve all the symbols regardless of their order of declaration in a same file.
+
+Variable reference with variables declared on different files is order-depdendent on the loading order of the files via the `load_dotenv()` function: variables defined in later calls to `load_dotenv()` are not yet visible to files being processed at a specific moment.
+
+Variable resolution can be explicitly turned off by setting the `interpolate` positional parameter of the `load_dotenv()` method to `false`.
 
 ## Examples
 
@@ -185,12 +197,43 @@ $ ./main
   eval "ping 8.8.8.8"
 ```
 
+### Variable resolution
+
+Assume the following `.env` file:
+
+```env
+# PARTIAL DEFINITIONS
+URL_PROT=https
+URL_ADDR=myweb.com
+URL_SUBD=some/sub/page.html
+
+# FULL URL
+URL=${URL_PROT}://${URL_ADDR}/${URL_SUBD}
+```
+
+The following `.cpp` file:
+
+```cpp
+#include "dotenv.h"
+#include <iostream>
+
+using namespace dotenv;
+using namespace std;
+
+int main()
+{
+    env.load_dotenv();
+    cout << "URL: " << env["URL"] << endl;
+}
+```
+
+would produce the following output:
+
+```shell
+$ ./main
+  URL: https://myweb.com/some/sub/page.html
+```
+
 ## Grammar
 
 For the geeks, you can check the grammars I've implemented on the `antlr/grammar/` directory.
-
-## Known issues
-
-The complete list of issues can be consulted at the [issues page](https://github.com/adeharo9/cpp-dotenv/issues).
-
-1. [Variable resolution on values not yet vailable](https://github.com/adeharo9/cpp-dotenv/issues/3)
