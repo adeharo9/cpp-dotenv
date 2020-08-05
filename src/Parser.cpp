@@ -64,7 +64,7 @@ void dotenv::Parser::parse_line()
     for (const pair<key_type, SymbolRecord>& symbol: symbols_table)
     {
         const key_type& key = symbol.first;
-        const SymbolRecord& record = symbol.second;
+        const SymbolRecord& record = symbols_table.at(key);
 
         if (record.local())
         {
@@ -98,7 +98,7 @@ void dotenv::Parser::resolve()
         for (const pair<key_type, SymbolRecord>& symbol: symbols_table)
         {
             const key_type& key = symbol.first;
-            const SymbolRecord& record = symbol.second;
+            const SymbolRecord& record = symbols_table.at(key);
 
             if (record.local() and not record.complete())
             {
@@ -143,7 +143,7 @@ void dotenv::Parser::register_env() const
     for (const pair<key_type, SymbolRecord>& symbol: symbols_table)
     {
         const key_type& key = symbol.first;
-        const SymbolRecord& record = symbol.second;
+        const SymbolRecord& record = symbols_table.at(key);
 
         if (record.local())
         {
