@@ -44,7 +44,7 @@ void SymbolsInitializerListener::exitVariable(LineParser::VariableContext* ctx)
     if (symbols_table.find(var_name) == symbols_table.end())
     {
         SymbolRecord var(true, true, 0, false);
-        var.set_value(dotenv::getenv(var_name).second);
+        var.set_value(getenv(var_name).second);
         symbols_table.emplace(var_name, var);
     }
 

@@ -33,7 +33,7 @@ int setenv(const char *name, const char *value, int overwrite)
 
 pair<bool, string> dotenv::getenv(const string& name)
 {
-    const char* value = getenv(name.c_str());
+    const char* value = ::getenv(name.c_str());
     const bool success = value != nullptr;
 
     if (not success)
@@ -47,7 +47,7 @@ pair<bool, string> dotenv::getenv(const string& name)
 
 int dotenv::setenv(const string& name, const string& value, bool overwrite)
 {
-    return setenv(name.c_str(), value.c_str(), overwrite ? 1 : 0);
+    return ::setenv(name.c_str(), value.c_str(), overwrite ? 1 : 0);
 }
 
 

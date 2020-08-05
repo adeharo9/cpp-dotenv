@@ -29,7 +29,7 @@ dotenv::dotenv& dotenv::dotenv::load_dotenv(const string& dotenv_path, const boo
 
 const dotenv::dotenv::value_type dotenv::dotenv::operator[](const key_type& k) const
 {
-    return dotenv::getenv(k).second;
+    return getenv(k).second;
 }
 
 
