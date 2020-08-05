@@ -208,12 +208,12 @@ LineParser::VariableContext::VariableContext(ParserRuleContext *parent, size_t i
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* LineParser::VariableContext::UNBOUNDED_VARIABLE() {
-  return getToken(LineParser::UNBOUNDED_VARIABLE, 0);
-}
-
 tree::TerminalNode* LineParser::VariableContext::BOUNDED_VARIABLE() {
   return getToken(LineParser::BOUNDED_VARIABLE, 0);
+}
+
+tree::TerminalNode* LineParser::VariableContext::UNBOUNDED_VARIABLE() {
+  return getToken(LineParser::UNBOUNDED_VARIABLE, 0);
 }
 
 
