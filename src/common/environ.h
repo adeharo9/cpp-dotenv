@@ -25,9 +25,9 @@ int setenv(const char *name, const char *value, int overwrite);
 
 namespace dotenv
 {
-    std::pair<bool, std::string> getenv(const std::string& name);
+    std::pair<bool, std::string> _getenv(const std::string& name);
 
-    int setenv(const std::string& name, const std::string& value, bool overwrite);
+    int _setenv(const std::string& name, const std::string& value, bool overwrite);
 }
 
 
