@@ -23,7 +23,7 @@ void PairsListener::enterPair(DotenvParser::PairContext* ctx)
 
 void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 {
-    if (not overwrite and getenv(_key).first)
+    if (not overwrite and dotenv::getenv(_key).first)
     {
         return;
     }
