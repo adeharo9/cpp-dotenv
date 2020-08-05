@@ -2,6 +2,8 @@
 
 set(STRUCTURES_LIB line_structures CACHE INTERNAL "")
 set(STRUCTURES_SRC
+    ResolveStack.cpp
+    ResolveStack.h
     SymbolsTable.cpp
     SymbolsTable.h
 )

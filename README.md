@@ -202,13 +202,13 @@ $ ./main
 Assume the following `.env` file:
 
 ```env
+# FULL URL
+URL=${URL_PROT}://${URL_ADDR}/${URL_SUBD}
+
 # PARTIAL DEFINITIONS
 URL_PROT=https
 URL_ADDR=myweb.com
 URL_SUBD=some/sub/page.html
-
-# FULL URL
-URL=${URL_PROT}://${URL_ADDR}/${URL_SUBD}
 ```
 
 The following `.cpp` file:

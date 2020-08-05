@@ -13,6 +13,18 @@ SymbolsResolverListener::SymbolsResolverListener(const string& key, SymbolsTable
 }
 
 
+void SymbolsResolverListener::exitLine(LineParser::LineContext* ctx)
+{
+    // While there are operations to be resolved, process them
+    while (not resolve_stack.empty())
+    {
+        ResolveOperation& operation = resolve_stack.top();
+        operation.run();
+        resolve_stack.pop();
+    }
+}
+
+
 void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
 {
     size_t pos;
@@ -50,9 +62,8 @@ void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
     {
         SymbolRecord& key_var = symbols_table.at(this->key);
 
-        // Delete the old variable substring, insert the new one and mark it
-        // as resolved
-        key_var.value().erase(pos, size).insert(pos, var.value());
+        // Add the resolve operation to the stack and mark it as resolved
+        resolve_stack.emplace(key_var.value(), var.value(), pos, size);
         key_var.dependency_resolve_one();
     }
 }

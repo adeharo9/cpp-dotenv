@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "ResolveStack.h"
 #include "SymbolsTable.h"
 #include "LineBaseListener.h"
 #include "LineParser.h"
@@ -16,12 +17,14 @@ namespace dotenv
 
         SymbolsResolverListener(const std::string& key, SymbolsTable& symbols_table);
 
+        virtual void exitLine(LineParser::LineContext* ctx) override;
         virtual void exitVariable(LineParser::VariableContext* ctx) override;
 
     private:
 
         const std::string& key;
         SymbolsTable& symbols_table;
+        ResolveStack resolve_stack;
 
     };
 }
