@@ -16,7 +16,7 @@ EscapeExpanderListener::EscapeExpanderListener(const string& key, SymbolsTable& 
 
 void EscapeExpanderListener::exitLine(LineParser::LineContext* ctx)
 {
-    // At this point all the resolve operations have been registered
+    // At this point all the expand operations have been registered
     while (not expand_stack.empty())
     {
         ReplaceOperation& operation = expand_stack.top();

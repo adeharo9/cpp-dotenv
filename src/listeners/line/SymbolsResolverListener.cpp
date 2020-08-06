@@ -1,8 +1,8 @@
 #include "SymbolsResolverListener.h"
 
 
-using namespace std;
 using namespace dotenv;
+using namespace std;
 
 
 SymbolsResolverListener::SymbolsResolverListener(const string& key, SymbolsTable& symbols_table):

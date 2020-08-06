@@ -3,8 +3,8 @@
 #include "environ.h"
 
 
-using namespace std;
 using namespace dotenv;
+using namespace std;
 
 
 SymbolsInitializerListener::SymbolsInitializerListener(const string& key, SymbolsTable& symbols_table):

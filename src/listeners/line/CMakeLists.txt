@@ -8,6 +8,8 @@ set(LINE_LISTENERS_SRC
     SymbolsInitializerListener.h
     SymbolsResolverListener.cpp
     SymbolsResolverListener.h
+    UnresolvedListener.cpp
+    UnresolvedListener.h
 )
 
 add_library(${LINE_LISTENERS_LIB} ${LINE_LISTENERS_SRC})
