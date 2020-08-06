@@ -1,6 +1,7 @@
 # [ANTLR4 C++ runtime](https://github.com/adeharo9/antlr4-cpp-runtime)
 
 ![version 4.8](https://img.shields.io/badge/version-4.8-blue "version 4.8")
+![BSD 3-clause license](https://img.shields.io/badge/license-BSD%203--clause-green "BSD 3-clause license")
 
 This project holds a copy of the [ANTLR4 C++ runtime](https://github.com/antlr/antlr4/tree/4.8/runtime/Cpp) as a standalone library, in order to be imported and to be linked to by means of CMake targets.
 
