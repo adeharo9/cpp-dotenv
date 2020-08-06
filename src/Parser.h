@@ -3,6 +3,8 @@
 
 #include "SymbolsTable.h"
 
+#include "antlr4-runtime.h"
+
 #include <fstream>
 
 
@@ -24,12 +26,19 @@ namespace dotenv
         void expand();
         void register_env() const;
 
+        void resolve_unresolved();
+        void walk_line(const std::string& line, antlr4::tree::ParseTreeListener& listener);
+
+    private:
+
         bool interpolate;
         bool overwrite;
         std::istream& is;
 
-        size_t unresolved;
+        antlr4::tree::ParseTree* tree;
+        antlr4::tree::ParseTreeWalker walker;
 
+        size_t unresolved;
         SymbolsTable symbols_table;
 
     };

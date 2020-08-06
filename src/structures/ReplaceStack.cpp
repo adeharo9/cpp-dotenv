@@ -19,3 +19,23 @@ void ReplaceOperation::run()
 {
     original.erase(pos, size).insert(pos, replace);
 }
+
+
+void ReplaceStack::clear()
+{
+    while (not this->empty())
+    {
+        this->pop();
+    }
+}
+
+
+void ReplaceStack::run()
+{
+    while (not this->empty())
+    {
+        ReplaceOperation& operation = this->top();
+        operation.run();
+        this->pop();
+    }
+}

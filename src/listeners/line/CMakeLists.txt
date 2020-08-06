@@ -2,12 +2,14 @@
 
 set(LINE_LISTENERS_LIB line_listeners CACHE INTERNAL "")
 set(LINE_LISTENERS_SRC
-    EscapeExpanderListener.cpp
-    EscapeExpanderListener.h
-    SymbolsInitializerListener.cpp
-    SymbolsInitializerListener.h
-    SymbolsResolverListener.cpp
-    SymbolsResolverListener.h
+    ExpanderListener.cpp
+    ExpanderListener.h
+    ResolverListener.cpp
+    ResolverListener.h
+    SymbolsListener.cpp
+    SymbolsListener.h
+    UnresolvedListener.cpp
+    UnresolvedListener.h
 )
 
 add_library(${LINE_LISTENERS_LIB} ${LINE_LISTENERS_SRC})

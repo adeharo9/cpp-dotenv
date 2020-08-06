@@ -13,13 +13,15 @@
 
 namespace dotenv
 {
-    class EscapeExpanderListener final: public LineBaseListener
+    class ExpanderListener final: public LineBaseListener
     {
     public:
 
-        EscapeExpanderListener(const std::string& key, SymbolsTable& symbols_table);
+        ExpanderListener(const std::string& key, SymbolsTable& symbols_table);
 
+        virtual void enterLine(LineParser::LineContext* ctx) override;
         virtual void exitLine(LineParser::LineContext* ctx) override;
+
         virtual void exitContent(LineParser::ContentContext* ctx) override;
 
     private:

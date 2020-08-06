@@ -1,16 +1,16 @@
 #include "Parser.h"
 
-#include "EscapeExpanderListener.h"
+#include "ExpanderListener.h"
 #include "PairsListener.h"
-#include "SymbolsInitializerListener.h"
-#include "SymbolsResolverListener.h"
+#include "ResolverListener.h"
+#include "SymbolsListener.h"
+#include "UnresolvedListener.h"
 
 #include "DotenvLexer.h"
 #include "DotenvParser.h"
 #include "LineLexer.h"
 #include "LineParser.h"
 
-#include "antlr4-runtime.h"
 #include "environ.h"
 
 #include <string>
@@ -26,6 +26,7 @@ dotenv::Parser::Parser(istream& is, const bool overwrite, const bool interpolate
     interpolate(interpolate),
     overwrite(overwrite),
     is(is),
+    tree(nullptr),
     unresolved(0)
 {
 
@@ -34,6 +35,11 @@ dotenv::Parser::Parser(istream& is, const bool overwrite, const bool interpolate
 
 void dotenv::Parser::parse()
 {
+    // Some initialization in case a parser is reused
+    tree = nullptr;
+    unresolved = 0;
+    symbols_table.clear();
+
     parse_dotenv();
 
     // Interpolation is the resolution of nested variables
@@ -57,9 +63,8 @@ void dotenv::Parser::parse_dotenv()
     tokens.fill();
 
     DotenvParser parser(&tokens);
-    tree::ParseTree* tree = parser.dotenv();
+    tree = parser.dotenv();
 
-    tree::ParseTreeWalker walker;
     PairsListener pairs_listener(overwrite, symbols_table);
     walker.walk(&pairs_listener, tree);
 }
@@ -79,17 +84,8 @@ void dotenv::Parser::parse_line()
         // check for dependency on other symbols
         if (record.local())
         {
-            ANTLRInputStream input(record.value());
-            LineLexer lexer(&input);
-            CommonTokenStream tokens(&lexer);
-            tokens.fill();
-
-            LineParser parser(&tokens);
-            tree::ParseTree* tree = parser.line();
-
-            tree::ParseTreeWalker walker;
-            SymbolsInitializerListener symbols_initializer(key, symbols_table);
-            walker.walk(&symbols_initializer, tree);
+            SymbolsListener symbols_listener(key, symbols_table);
+            walk_line(record.value(), symbols_listener);
 
             // If after the check the symbol has dependency on other symbols,
             // take not of it for later resolving
@@ -122,17 +118,8 @@ void dotenv::Parser::resolve()
             // it by walking through its dependencies again
             if (record.local() and not record.complete())
             {
-                ANTLRInputStream input(record.value());
-                LineLexer lexer(&input);
-                CommonTokenStream tokens(&lexer);
-                tokens.fill();
-
-                LineParser parser(&tokens);
-                tree::ParseTree* tree = parser.line();
-
-                tree::ParseTreeWalker walker;
-                SymbolsResolverListener symbols_resolver(key, symbols_table);
-                walker.walk(&symbols_resolver, tree);
+                ResolverListener resolver_listener(key, symbols_table);
+                walk_line(record.value(), resolver_listener);
 
                 // If the symbol is now completed, note it
                 if (record.complete())
@@ -143,7 +130,7 @@ void dotenv::Parser::resolve()
                 // No need to further wait in this situation
                 if (unresolved == 0)
                 {
-                    return;
+                    break;
                 }
             }
         }
@@ -151,9 +138,10 @@ void dotenv::Parser::resolve()
         // If there are no new variables resolved in an iteration, it means
         // there is at least one circular dependency and thus it cannot be
         // resolved
+        // Solve them by erasing the references on the string
         if (old_unresolved == unresolved)
         {
-            return;
+            resolve_unresolved();
         }
     }
 }
@@ -172,17 +160,8 @@ void dotenv::Parser::expand()
         // Expand only escaped sequences in local symbols
         if (record.local())
         {
-            ANTLRInputStream input(record.value());
-            LineLexer lexer(&input);
-            CommonTokenStream tokens(&lexer);
-            tokens.fill();
-
-            LineParser parser(&tokens);
-            tree::ParseTree* tree = parser.line();
-
-            tree::ParseTreeWalker walker;
-            EscapeExpanderListener escape_expander(key, symbols_table);
-            walker.walk(&escape_expander, tree);
+            ExpanderListener expander_listener(key, symbols_table);
+            walk_line(record.value(), expander_listener);
         }
     }
 }
@@ -201,4 +180,45 @@ void dotenv::Parser::register_env() const
             setenv(key, record.value(), overwrite);
         }
     }
+}
+
+
+void dotenv::Parser::resolve_unresolved()
+{
+    for (const pair<string, SymbolRecord>& symbol: symbols_table)
+    {
+        // std::pair.second returns a copy of the second element, and a
+        // reference is needed to check the evolution of the symbol's state,
+        // so take it directly from the symbols table
+        const string& key = symbol.first;
+        const SymbolRecord& record = symbols_table.at(key);
+
+        // If the symbol is local and is not yet resolved, try to resolve
+        // it by walking through its dependencies again
+        if (record.local() and not record.complete())
+        {
+            UnresolvedListener unresolved_listener(key, symbols_table);
+            walk_line(record.value(), unresolved_listener);
+
+            // If the symbol is now completed, note it
+            if (record.complete())
+            {
+                --unresolved;
+            }
+        }
+    }
+}
+
+
+void dotenv::Parser::walk_line(const string& line, tree::ParseTreeListener& listener)
+{
+    ANTLRInputStream input(line);
+    LineLexer lexer(&input);
+    CommonTokenStream tokens(&lexer);
+    tokens.fill();
+
+    LineParser parser(&tokens);
+    tree = parser.line();
+
+    walker.walk(&listener, tree);
 }

@@ -1,13 +1,13 @@
-#include "SymbolsInitializerListener.h"
+#include "SymbolsListener.h"
 
 #include "environ.h"
 
 
-using namespace std;
 using namespace dotenv;
+using namespace std;
 
 
-SymbolsInitializerListener::SymbolsInitializerListener(const string& key, SymbolsTable& symbols_table):
+SymbolsListener::SymbolsListener(const string& key, SymbolsTable& symbols_table):
     key(key),
     symbols_table(symbols_table)
 {
@@ -15,7 +15,7 @@ SymbolsInitializerListener::SymbolsInitializerListener(const string& key, Symbol
 }
 
 
-void SymbolsInitializerListener::exitVariable(LineParser::VariableContext* ctx)
+void SymbolsListener::exitVariable(LineParser::VariableContext* ctx)
 {
     string var_name;
 
