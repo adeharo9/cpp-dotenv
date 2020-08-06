@@ -323,4 +323,7 @@ else()
     target_compile_options(${ANTLR4_CPP_RUNTIME} PRIVATE
         -w -O3
     )
+    target_compile_options(${ANTLR4_CPP_RUNTIME} PUBLIC
+        -Wno-attributes
+    )
 endif()
