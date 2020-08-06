@@ -19,11 +19,14 @@ namespace dotenv
         virtual void enterPair(DotenvParser::PairContext* ctx) override;
         virtual void exitPair(DotenvParser::PairContext* ctx) override;
 
+        virtual void enterKey(DotenvParser::KeyContext* ctx) override;
         virtual void exitKey(DotenvParser::KeyContext* ctx) override;
+
         virtual void exitValue(DotenvParser::ValueContext* ctx) override;
 
     private:
 
+        bool _errored;
         std::string _key;
         std::string _value;
 

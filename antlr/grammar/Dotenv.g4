@@ -19,7 +19,7 @@ pair
 
 key
     : (export_token=UNQUOTED_STRING WS)? key_unquoted=UNQUOTED_STRING
-    | key_string=STRING
+    | (export_token=UNQUOTED_STRING WS)? key_string=STRING
     ;
 
 value

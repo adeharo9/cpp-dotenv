@@ -16,6 +16,7 @@ PairsListener::PairsListener(const bool overwrite, SymbolsTable& symbols_table):
 
 void PairsListener::enterPair(DotenvParser::PairContext* ctx)
 {
+    _errored = false;
     _key.clear();
     _value.clear();
 }
@@ -23,6 +24,13 @@ void PairsListener::enterPair(DotenvParser::PairContext* ctx)
 
 void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 {
+    // If there was some kind of parsing error due by rules not detectable
+    // by lexer or parser, do not add the pair to the symbol table
+    if (_errored)
+    {
+        return;
+    }
+
     // If overwrite is turned off and the environment variable already
     // exists, do not record it on the symbols table
     // Later on, during resolution, it will be brought from the external
@@ -39,8 +47,22 @@ void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 }
 
 
+void PairsListener::enterKey(DotenvParser::KeyContext* ctx)
+{
+    if (ctx->export_token != nullptr and ctx->export_token->getText() != "export")
+    {
+        _errored = true;
+    }
+}
+
+
 void PairsListener::exitKey(DotenvParser::KeyContext* ctx)
 {
+    if (_errored)
+    {
+        return;
+    }
+
     if (ctx->key_unquoted != nullptr)
     {
         _key += ctx->key_unquoted->getText();
@@ -55,6 +77,11 @@ void PairsListener::exitKey(DotenvParser::KeyContext* ctx)
 
 void PairsListener::exitValue(DotenvParser::ValueContext* ctx)
 {
+    if (_errored)
+    {
+        return;
+    }
+
     size_t n_unquoted = ctx->UNQUOTED_STRING().size();
 
     if (n_unquoted > 0)
