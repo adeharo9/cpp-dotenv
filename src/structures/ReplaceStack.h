@@ -18,7 +18,7 @@ namespace dotenv
     private:
 
         std::string& original;
-        const std::string& replace;
+        const std::string replace;
         size_t pos;
         size_t size;
     };
