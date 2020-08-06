@@ -130,7 +130,7 @@ void dotenv::Parser::resolve()
                 // No need to further wait in this situation
                 if (unresolved == 0)
                 {
-                    return;
+                    break;
                 }
             }
         }
@@ -199,6 +199,12 @@ void dotenv::Parser::resolve_unresolved()
         {
             UnresolvedListener unresolved_resolver(key, symbols_table);
             walk_line(record.value(), unresolved_resolver);
+
+            // If the symbol is now completed, note it
+            if (record.complete())
+            {
+                --unresolved;
+            }
         }
     }
 }

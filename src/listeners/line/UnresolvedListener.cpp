@@ -50,4 +50,5 @@ void UnresolvedListener::exitVariable(LineParser::VariableContext* ctx)
     // from end to beginning so position and size indices are maintained
     // constant throughout the different operations
     resolve_stack.emplace(record.value(), "", pos, size);
+    record.dependency_resolve_one();
 }
