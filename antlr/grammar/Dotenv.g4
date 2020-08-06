@@ -53,7 +53,7 @@ fragment SINGLE_UNQUOTED_STRING: (ESC_SEQ | ~['\\])*;
 fragment DOUBLE_UNQUOTED_STRING: (ESC_SEQ | ~["\\])*;
 
 fragment ESC_SEQ
-    : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\'|'$')
+    : '\\' ('\''|'"'|'?'|'\\'|'a'|'b'|'f'|'n'|'r'|'t'|'v'|'$')
     | UNICODE_ESC
     | OCTAL_ESC
     ;

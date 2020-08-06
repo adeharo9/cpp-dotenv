@@ -71,5 +71,6 @@ const unordered_map<string, string> EscapeExpanderListener::ESC_EQ
     { "\\n" , "\n" },
     { "\\r" , "\r" },
     { "\\t" , "\t" },
-    { "\\v" , "\v" }
+    { "\\v" , "\v" },
+    { "\\$" , "$"  }
 };
