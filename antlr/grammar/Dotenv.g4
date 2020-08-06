@@ -41,12 +41,28 @@ COMMENT
     ;
 
 STRING
-    : '\''SINGLE_UNQUOTED_STRING? '\''
-    | '"' DOUBLE_UNQUOTED_STRING? '"'
+    : '\'' SINGLE_UNQUOTED_STRING '\''
+    | '"' DOUBLE_UNQUOTED_STRING '"'
     ;
 
-UNQUOTED_STRING: ~[#="' \t\r\n]+;
+UNQUOTED_STRING: (ESC_SEQ | ~[#="' \t\r\n\\])+;
 
 fragment COMMENT_STRING: ~[\r\n]+;
-fragment SINGLE_UNQUOTED_STRING: ~[']+;
-fragment DOUBLE_UNQUOTED_STRING: ~["]+;
+
+fragment SINGLE_UNQUOTED_STRING: (ESC_SEQ | ~['\\])*;
+fragment DOUBLE_UNQUOTED_STRING: (ESC_SEQ | ~["\\])*;
+
+fragment ESC_SEQ
+    : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\'|'$')
+    | UNICODE_ESC
+    | OCTAL_ESC
+    ;
+fragment OCTAL_ESC
+    : '\\' ('0'..'3') ('0'..'7') ('0'..'7')
+    | '\\' ('0'..'7') ('0'..'7')
+    | '\\' ('0'..'7')
+    ;
+fragment UNICODE_ESC
+    : '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    ;
+fragment HEX_DIGIT: ('0'..'9'|'a'..'f'|'A'..'F');

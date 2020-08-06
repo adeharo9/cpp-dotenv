@@ -12,7 +12,7 @@
 class  LineLexer : public antlr4::Lexer {
 public:
   enum {
-    ESC_USD = 1, BOUNDED_VARIABLE = 2, UNBOUNDED_VARIABLE = 3, STRING_CHAR = 4
+    ESC_SEQ = 1, BOUNDED_VARIABLE = 2, UNBOUNDED_VARIABLE = 3, STRING_CHAR = 4
   };
 
   LineLexer(antlr4::CharStream *input);

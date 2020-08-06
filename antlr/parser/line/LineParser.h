@@ -12,7 +12,7 @@
 class  LineParser : public antlr4::Parser {
 public:
   enum {
-    ESC_USD = 1, BOUNDED_VARIABLE = 2, UNBOUNDED_VARIABLE = 3, STRING_CHAR = 4
+    ESC_SEQ = 1, BOUNDED_VARIABLE = 2, UNBOUNDED_VARIABLE = 3, STRING_CHAR = 4
   };
 
   enum {
@@ -53,8 +53,8 @@ public:
     virtual size_t getRuleIndex() const override;
     std::vector<antlr4::tree::TerminalNode *> STRING_CHAR();
     antlr4::tree::TerminalNode* STRING_CHAR(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> ESC_USD();
-    antlr4::tree::TerminalNode* ESC_USD(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> ESC_SEQ();
+    antlr4::tree::TerminalNode* ESC_SEQ(size_t i);
     std::vector<VariableContext *> variable();
     VariableContext* variable(size_t i);
 

@@ -77,7 +77,7 @@ LineParser::LineContext* LineParser::line() {
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << LineParser::ESC_USD)
+      ((1ULL << _la) & ((1ULL << LineParser::ESC_SEQ)
       | (1ULL << LineParser::BOUNDED_VARIABLE)
       | (1ULL << LineParser::UNBOUNDED_VARIABLE)
       | (1ULL << LineParser::STRING_CHAR))) != 0)) {
@@ -111,12 +111,12 @@ tree::TerminalNode* LineParser::ContentContext::STRING_CHAR(size_t i) {
   return getToken(LineParser::STRING_CHAR, i);
 }
 
-std::vector<tree::TerminalNode *> LineParser::ContentContext::ESC_USD() {
-  return getTokens(LineParser::ESC_USD);
+std::vector<tree::TerminalNode *> LineParser::ContentContext::ESC_SEQ() {
+  return getTokens(LineParser::ESC_SEQ);
 }
 
-tree::TerminalNode* LineParser::ContentContext::ESC_USD(size_t i) {
-  return getToken(LineParser::ESC_USD, i);
+tree::TerminalNode* LineParser::ContentContext::ESC_SEQ(size_t i) {
+  return getToken(LineParser::ESC_SEQ, i);
 }
 
 std::vector<LineParser::VariableContext *> LineParser::ContentContext::variable() {
@@ -167,9 +167,9 @@ LineParser::ContentContext* LineParser::content() {
           break;
         }
 
-        case LineParser::ESC_USD: {
+        case LineParser::ESC_SEQ: {
           setState(12);
-          match(LineParser::ESC_USD);
+          match(LineParser::ESC_SEQ);
           break;
         }
 
@@ -187,7 +187,7 @@ LineParser::ContentContext* LineParser::content() {
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << LineParser::ESC_USD)
+      ((1ULL << _la) & ((1ULL << LineParser::ESC_SEQ)
       | (1ULL << LineParser::BOUNDED_VARIABLE)
       | (1ULL << LineParser::UNBOUNDED_VARIABLE)
       | (1ULL << LineParser::STRING_CHAR))) != 0));
@@ -281,7 +281,7 @@ std::vector<std::string> LineParser::_literalNames = {
 };
 
 std::vector<std::string> LineParser::_symbolicNames = {
-  "", "ESC_USD", "BOUNDED_VARIABLE", "UNBOUNDED_VARIABLE", "STRING_CHAR"
+  "", "ESC_SEQ", "BOUNDED_VARIABLE", "UNBOUNDED_VARIABLE", "STRING_CHAR"
 };
 
 dfa::Vocabulary LineParser::_vocabulary(_literalNames, _symbolicNames);
