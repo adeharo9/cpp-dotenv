@@ -2,6 +2,8 @@
 
 set(LINE_LISTENERS_LIB line_listeners CACHE INTERNAL "")
 set(LINE_LISTENERS_SRC
+    EscapeExpanderListener.cpp
+    EscapeExpanderListener.h
     SymbolsInitializerListener.cpp
     SymbolsInitializerListener.h
     SymbolsResolverListener.cpp

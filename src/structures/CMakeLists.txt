@@ -1,9 +1,9 @@
 #----------------------- LIBRARY CONFIGURATION --------------------------------
 
-set(STRUCTURES_LIB line_structures CACHE INTERNAL "")
+set(STRUCTURES_LIB structures CACHE INTERNAL "")
 set(STRUCTURES_SRC
-    ResolveStack.cpp
-    ResolveStack.h
+    ReplaceStack.cpp
+    ReplaceStack.h
     SymbolsTable.cpp
     SymbolsTable.h
 )

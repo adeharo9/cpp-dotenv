@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "ResolveStack.h"
+#include "ReplaceStack.h"
 #include "SymbolsTable.h"
 #include "LineBaseListener.h"
 #include "LineParser.h"
@@ -24,7 +24,7 @@ namespace dotenv
 
         const std::string& key;
         SymbolsTable& symbols_table;
-        ResolveStack resolve_stack;
+        ReplaceStack resolve_stack;
 
     };
 }

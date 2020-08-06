@@ -18,7 +18,7 @@ void SymbolsResolverListener::exitLine(LineParser::LineContext* ctx)
     // At this point all the resolve operations have been registered
     while (not resolve_stack.empty())
     {
-        ResolveOperation& operation = resolve_stack.top();
+        ReplaceOperation& operation = resolve_stack.top();
         operation.run();
         resolve_stack.pop();
     }
@@ -60,12 +60,12 @@ void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
     // the original string
     if (var.complete())
     {
-        SymbolRecord& key_var = symbols_table.at(this->key);
+        SymbolRecord& record = symbols_table.at(this->key);
 
         // If there is more than one substitution operation, they must be performed
         // from end to beginning so position and size indices are maintained
         // constant throughout the different operations
-        resolve_stack.emplace(key_var.value(), var.value(), pos, size);
-        key_var.dependency_resolve_one();
+        resolve_stack.emplace(record.value(), var.value(), pos, size);
+        record.dependency_resolve_one();
     }
 }

@@ -1,5 +1,6 @@
 #include "Parser.h"
 
+#include "EscapeExpanderListener.h"
 #include "PairsListener.h"
 #include "SymbolsInitializerListener.h"
 #include "SymbolsResolverListener.h"
@@ -42,6 +43,7 @@ void dotenv::Parser::parse()
         resolve();
     }
 
+    expand();
     register_env();
 }
 
@@ -152,6 +154,35 @@ void dotenv::Parser::resolve()
         if (old_unresolved == unresolved)
         {
             return;
+        }
+    }
+}
+
+
+void dotenv::Parser::expand()
+{
+    for (const pair<string, SymbolRecord>& symbol: symbols_table)
+    {
+        // std::pair.second returns a copy of the second element, and a
+        // reference is needed to check the evolution of the symbol's state,
+        // so take it directly from the symbols table
+        const string& key = symbol.first;
+        const SymbolRecord& record = symbols_table.at(key);
+
+        // Expand only escaped sequences in local symbols
+        if (record.local())
+        {
+            ANTLRInputStream input(record.value());
+            LineLexer lexer(&input);
+            CommonTokenStream tokens(&lexer);
+            tokens.fill();
+
+            LineParser parser(&tokens);
+            tree::ParseTree* tree = parser.line();
+
+            tree::ParseTreeWalker walker;
+            EscapeExpanderListener escape_expander(key, symbols_table);
+            walker.walk(&escape_expander, tree);
         }
     }
 }

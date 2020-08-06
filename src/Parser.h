@@ -21,6 +21,7 @@ namespace dotenv
         void parse_dotenv();
         void parse_line();
         void resolve();
+        void expand();
         void register_env() const;
 
         bool interpolate;
