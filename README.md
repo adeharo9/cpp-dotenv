@@ -1,27 +1,28 @@
-# cpp-dotenv
+# [C++ .ENV](https://github.com/adeharo9/cpp-dotenv)
 
-![version 0.3.0](https://img.shields.io/badge/version-0.3.0-blue)
+![version 0.3.0](https://img.shields.io/badge/version-0.3.0-blue "version 0.3.0")
+![BSD 3-clause license](https://img.shields.io/badge/license-BSD%203--clause-green "BSD 3-clause license")
 
-C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from `.env` for C++ projects.
+C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from `.env` files for C++ projects.
 
 **Please take into account this is still a developing project.**
-
-**cpp-dotenv** is implemented as a single C++ header file, so there is no need to compile nor to add complex file dependencies to your project. Simply include the header file wherever you want to use it and ta-da!, you're done.
 
 ## Table of contents
 
 1. [Dependencies](#dependencies)
 2. [Usage](#usage)
    1. [CMake](#cmake)
+   2. [Variable resolution](#variable-resolution)
 3. [Examples](#examples)
    1. [Basic usage](#basic-usage)
    2. [Reference renaming](#reference-renaming)
    3. [Several dotenv files](#several-dotenv-files)
+   4. [Variable resolution](#variable-resolution-1)
 4. [Grammar](#grammar)
 
 ## Dependencies
 
-**NONE**, for sure! :sunglasses: If it had, it wouldn't follow the basic dotenv principles.
+**NONE**, for sure! :sunglasses: If it had, it wouldn't follow the basic dotenv principles. All the needed libraries are shipped with this repository right out of the box.
 
 ## Usage
 
@@ -37,7 +38,15 @@ For the sake of simplycity (and if your project namespace density allows to), yo
 using namespace dotenv;
 ```
 
-For convenience, **cpp-dotenv** auto-configures a class object (which is instance of the singleton class `dotenv`) by calling the `load_dotenv()` method at the very beginning of your file (just right before the end of `dotenv.h`) and trying to load a `.env` file, although if you need to add-in your own files (like `.myenv`), simply re-run the loading step passing the file name as parameter; everything new will show up on the `dotenv` instances.
+In order to bring your environment variables from your configuration files, simply make as many calls to the `load_dotenv(const std::string& dotenv_path)` function as needed with the appropriate paths (either relative or absolute).
+
+```cpp
+env.load_dotenv();
+```
+
+Not passing any parameter to the function is equivalent to tell **cpp-dotenv** to search for a file named `.env` at the same level as the executable that is making the call to the function.
+
+---
 
 By default, already-defined environment variables are not overwritten even if redefined in some of the loaded files. This behavior can be changed, however, by calling the `load_config()` function with the `overwrite` parameter set to `true`. For an example, take a look at [this one](#several-dotenv-files).
 
@@ -49,17 +58,27 @@ auto& dotenv = env; // 'auto' here is 'dotenv::dotenv'
 
 ### CMake
 
-`cpp-dotenv` also comes with support for `CMake` right out of the box. In order to use it, simply include this repository's directory and link the `CPP_DOTENV_LIB` library to your own targets where needed:
+`cpp-dotenv` also comes with support for `CMake` right out of the box. In order to use it, simply include this repository's directory and link the `cpp_dotenv` target to your own targets where needed (the target is also available under the symbol `CPP_DOTENV`):
 
 ```cmake
 add_subdirectory(cpp-dotenv)
 ```
 
 ```cmake
-target_link_libraries(YOUR_TARGET ${CPP_DOTENV_LIB})
+target_link_libraries(YOUR_TARGET cpp_dotenv)
 ```
 
 After this, you might use the library as described in [usage](#usage); no extra scoping, no need to worry about the project's directory structure.
+
+### Variable resolution
+
+Now **cpp-dotenv** by default resolves variables nested inside variable definitions in the parsed files, both with those defined in the file being loaded or already present in the environment itself.
+
+Variable reference with variables declared in the same file is order-independent: there's no need to worry about the declaration order of the variables, **cpp-dotenv** will resolve all the symbols regardless of their order of declaration in a same file.
+
+Variable reference with variables declared on different files is order-depdendent on the loading order of the files via the `load_dotenv()` function: variables defined in later calls to `load_dotenv()` are not yet visible to files being processed at a specific moment.
+
+Variable resolution can be explicitly turned off by setting the `interpolate` positional parameter of the `load_dotenv()` method to `false`.
 
 ## Examples
 
@@ -89,6 +108,7 @@ using namespace std;
 
 int main()
 {
+    env.load_dotenv();
     cout << "DB_NAME: " << env["DB_NAME"] << endl;
     cout << "eval \"" << env["COMMAND"] << " " << env["HOST"] << "\"" << endl;
 }
@@ -104,7 +124,7 @@ $ ./main
 
 ### Reference renaming
 
-Assuming the same `.env` file as in the [previous case](#basic-usage), the predefined `env` reference can be easily renamed and used just exactly as the original one.
+Assuming the same `.env` file as in the [previous case](#basic-usage), the predefined `env` reference can be easily renamed and used just exactly as the original one. The `load_dotenv()` function also returns a reference to the object it is being applied to, so it can be easily nested in a case like this.
 
 The following code:
 
@@ -116,7 +136,7 @@ using namespace std;
 
 int main()
 {
-    auto& dotenv = dotenv::env;
+    auto& dotenv = dotenv::env.load_dotenv();
     cout << "DB_NAME: " << dotenv["DB_NAME"] << endl;
     cout << "eval \"" << dotenv["COMMAND"] << " " << dotenv["HOST"] << "\"" << endl;
 }
@@ -132,7 +152,7 @@ $ ./main
 
 ### Several dotenv files
 
-The situation of having several different dotenv files is no stranger one (`.env` for private configuration variables, `.pubenv` for public variables, etc.). Loading several files in addition to the default one and overwritting any variables that are redefined on the files can be done as follows:
+The situation of having several different dotenv files is no stranger one (`.env` for private configuration variables, `.pubenv` for public variables, etc.). Loading several files and overwritting any variables that are redefined on the files can be done as follows:
 
 Assume the following `.env` file:
 
@@ -177,12 +197,43 @@ $ ./main
   eval "ping 8.8.8.8"
 ```
 
+### Variable resolution
+
+Assume the following `.env` file:
+
+```env
+# FULL URL
+URL=${URL_PROT}://${URL_ADDR}/${URL_SUBD}
+
+# PARTIAL DEFINITIONS
+URL_PROT=https
+URL_ADDR=myweb.com
+URL_SUBD=some/sub/page.html
+```
+
+The following `.cpp` file:
+
+```cpp
+#include "dotenv.h"
+#include <iostream>
+
+using namespace dotenv;
+using namespace std;
+
+int main()
+{
+    env.load_dotenv();
+    cout << "URL: " << env["URL"] << endl;
+}
+```
+
+would produce the following output:
+
+```shell
+$ ./main
+  URL: https://myweb.com/some/sub/page.html
+```
+
 ## Grammar
 
-For the geeks, you can check the grammar I've implemented on the `grammar/env.g4` file. Despite being written in an ANTLR4 fashion, I've implemented a simple recursive parser myself given the basic nature of the language. The parser and its methods are publicly available under the `dotenv::parser` class.
-
-## Known issues
-
-The complete list of issues can be consulted at the [issues page](https://github.com/adeharo9/cpp-dotenv/issues).
-
-1. [Variable resolution on values not yet vailable](https://github.com/adeharo9/cpp-dotenv/issues/3)
+For the geeks, you can check the grammars I've implemented on the `antlr/grammar/` directory.
