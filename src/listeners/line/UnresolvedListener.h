@@ -17,7 +17,9 @@ namespace dotenv
 
         UnresolvedListener(const std::string& key, SymbolsTable& symbols_table);
 
+        virtual void enterLine(LineParser::LineContext* ctx) override;
         virtual void exitLine(LineParser::LineContext* ctx) override;
+
         virtual void exitVariable(LineParser::VariableContext* ctx) override;
 
     private:

@@ -10,11 +10,11 @@
 
 namespace dotenv
 {
-    class SymbolsInitializerListener final: public LineBaseListener
+    class SymbolsListener final: public LineBaseListener
     {
     public:
 
-        SymbolsInitializerListener(const std::string& key, SymbolsTable& symbols_table);
+        SymbolsListener(const std::string& key, SymbolsTable& symbols_table);
 
         virtual void exitVariable(LineParser::VariableContext* ctx) override;
 

@@ -1,4 +1,4 @@
-#include "EscapeExpanderListener.h"
+#include "ExpanderListener.h"
 
 
 using namespace antlr4;
@@ -6,7 +6,7 @@ using namespace dotenv;
 using namespace std;
 
 
-EscapeExpanderListener::EscapeExpanderListener(const string& key, SymbolsTable& symbols_table):
+ExpanderListener::ExpanderListener(const string& key, SymbolsTable& symbols_table):
     key(key),
     symbols_table(symbols_table)
 {
@@ -14,19 +14,21 @@ EscapeExpanderListener::EscapeExpanderListener(const string& key, SymbolsTable& 
 }
 
 
-void EscapeExpanderListener::exitLine(LineParser::LineContext* ctx)
+void ExpanderListener::enterLine(LineParser::LineContext* ctx)
 {
-    // At this point all the expand operations have been registered
-    while (not expand_stack.empty())
-    {
-        ReplaceOperation& operation = expand_stack.top();
-        operation.run();
-        expand_stack.pop();
-    }
+    // Clear the stack in case the listener is reused
+    expand_stack.clear();
 }
 
 
-void EscapeExpanderListener::exitContent(LineParser::ContentContext* ctx)
+void ExpanderListener::exitLine(LineParser::LineContext* ctx)
+{
+    // At this point all the expand operations have been registered
+    expand_stack.run();
+}
+
+
+void ExpanderListener::exitContent(LineParser::ContentContext* ctx)
 {
     for (tree::TerminalNode* ESC_SEQ: ctx->ESC_SEQ())
     {
@@ -45,7 +47,7 @@ void EscapeExpanderListener::exitContent(LineParser::ContentContext* ctx)
 }
 
 
-pair<bool, string> EscapeExpanderListener::decode_escaped(const std::string& escaped)
+pair<bool, string> ExpanderListener::decode_escaped(const std::string& escaped)
 {
     bool success = ESC_EQ.find(escaped) != ESC_EQ.end();
     string expanded;
@@ -59,7 +61,7 @@ pair<bool, string> EscapeExpanderListener::decode_escaped(const std::string& esc
 }
 
 
-const unordered_map<string, string> EscapeExpanderListener::ESC_EQ
+const unordered_map<string, string> ExpanderListener::ESC_EQ
 {
     { "\\'" , "'"  },
     { "\\\"", "\"" },

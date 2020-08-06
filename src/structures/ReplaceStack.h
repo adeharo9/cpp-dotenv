@@ -25,6 +25,10 @@ namespace dotenv
 
     class ReplaceStack: public std::stack<ReplaceOperation>
     {
+    public:
+
+        void clear();
+        void run();
 
     };
 }

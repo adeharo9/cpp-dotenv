@@ -1,11 +1,11 @@
-#include "SymbolsResolverListener.h"
+#include "ResolverListener.h"
 
 
 using namespace dotenv;
 using namespace std;
 
 
-SymbolsResolverListener::SymbolsResolverListener(const string& key, SymbolsTable& symbols_table):
+ResolverListener::ResolverListener(const string& key, SymbolsTable& symbols_table):
     key(key),
     symbols_table(symbols_table)
 {
@@ -13,19 +13,21 @@ SymbolsResolverListener::SymbolsResolverListener(const string& key, SymbolsTable
 }
 
 
-void SymbolsResolverListener::exitLine(LineParser::LineContext* ctx)
+void ResolverListener::enterLine(LineParser::LineContext* ctx)
 {
-    // At this point all the resolve operations have been registered
-    while (not resolve_stack.empty())
-    {
-        ReplaceOperation& operation = resolve_stack.top();
-        operation.run();
-        resolve_stack.pop();
-    }
+    // Clear the stack in case the listener is reused
+    resolve_stack.clear();
 }
 
 
-void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
+void ResolverListener::exitLine(LineParser::LineContext* ctx)
+{
+    // At this point all the resolve operations have been registered
+    resolve_stack.run();
+}
+
+
+void ResolverListener::exitVariable(LineParser::VariableContext* ctx)
 {
     size_t pos;
     size_t size;
@@ -60,7 +62,7 @@ void SymbolsResolverListener::exitVariable(LineParser::VariableContext* ctx)
     // the original string
     if (var.complete())
     {
-        SymbolRecord& record = symbols_table.at(this->key);
+        SymbolRecord& record = symbols_table.at(key);
 
         // If there is more than one substitution operation, they must be performed
         // from end to beginning so position and size indices are maintained

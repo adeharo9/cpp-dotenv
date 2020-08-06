@@ -13,15 +13,17 @@ UnresolvedListener::UnresolvedListener(const string& key, SymbolsTable& symbols_
 }
 
 
+void UnresolvedListener::enterLine(LineParser::LineContext* ctx)
+{
+    // Clear the stack in case the listener is reused
+    resolve_stack.clear();
+}
+
+
 void UnresolvedListener::exitLine(LineParser::LineContext* ctx)
 {
     // At this point all the resolve operations have been registered
-    while (not resolve_stack.empty())
-    {
-        ReplaceOperation& operation = resolve_stack.top();
-        operation.run();
-        resolve_stack.pop();
-    }
+    resolve_stack.run();
 }
 
 
@@ -44,7 +46,7 @@ void UnresolvedListener::exitVariable(LineParser::VariableContext* ctx)
         size = ctx->UNBOUNDED_VARIABLE()->getText().size();
     }
 
-    SymbolRecord& record = symbols_table.at(this->key);
+    SymbolRecord& record = symbols_table.at(key);
 
     // If there is more than one substitution operation, they must be performed
     // from end to beginning so position and size indices are maintained

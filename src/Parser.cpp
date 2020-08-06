@@ -1,9 +1,9 @@
 #include "Parser.h"
 
-#include "EscapeExpanderListener.h"
+#include "ExpanderListener.h"
 #include "PairsListener.h"
-#include "SymbolsInitializerListener.h"
-#include "SymbolsResolverListener.h"
+#include "ResolverListener.h"
+#include "SymbolsListener.h"
 #include "UnresolvedListener.h"
 
 #include "DotenvLexer.h"
@@ -84,8 +84,8 @@ void dotenv::Parser::parse_line()
         // check for dependency on other symbols
         if (record.local())
         {
-            SymbolsInitializerListener symbols_initializer(key, symbols_table);
-            walk_line(record.value(), symbols_initializer);
+            SymbolsListener symbols_listener(key, symbols_table);
+            walk_line(record.value(), symbols_listener);
 
             // If after the check the symbol has dependency on other symbols,
             // take not of it for later resolving
@@ -118,8 +118,8 @@ void dotenv::Parser::resolve()
             // it by walking through its dependencies again
             if (record.local() and not record.complete())
             {
-                SymbolsResolverListener symbols_resolver(key, symbols_table);
-                walk_line(record.value(), symbols_resolver);
+                ResolverListener resolver_listener(key, symbols_table);
+                walk_line(record.value(), resolver_listener);
 
                 // If the symbol is now completed, note it
                 if (record.complete())
@@ -160,8 +160,8 @@ void dotenv::Parser::expand()
         // Expand only escaped sequences in local symbols
         if (record.local())
         {
-            EscapeExpanderListener escape_expander(key, symbols_table);
-            walk_line(record.value(), escape_expander);
+            ExpanderListener expander_listener(key, symbols_table);
+            walk_line(record.value(), expander_listener);
         }
     }
 }
@@ -197,8 +197,8 @@ void dotenv::Parser::resolve_unresolved()
         // it by walking through its dependencies again
         if (record.local() and not record.complete())
         {
-            UnresolvedListener unresolved_resolver(key, symbols_table);
-            walk_line(record.value(), unresolved_resolver);
+            UnresolvedListener unresolved_listener(key, symbols_table);
+            walk_line(record.value(), unresolved_listener);
 
             // If the symbol is now completed, note it
             if (record.complete())
