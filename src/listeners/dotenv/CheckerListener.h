@@ -2,7 +2,6 @@
 
 
 #include "TreeDecorations.h"
-#include "SymbolsTable.h"
 #include "DotenvBaseListener.h"
 #include "DotenvParser.h"
 
@@ -11,11 +10,11 @@
 
 namespace dotenv
 {
-    class PairsListener final: public DotenvBaseListener
+    class CheckerListener final: public DotenvBaseListener
     {
     public:
 
-        PairsListener(const bool overwrite, SymbolsTable& symbols_table, TreeDecorations& decorations);
+        CheckerListener(TreeDecorations& decorations);
 
         virtual void enterPair(DotenvParser::PairContext* ctx) override;
         virtual void exitPair(DotenvParser::PairContext* ctx) override;
@@ -26,12 +25,10 @@ namespace dotenv
 
     private:
 
-        std::string _key;
-        std::string _value;
-
-        bool overwrite;
-        SymbolsTable& symbols_table;
+        bool errored;
         TreeDecorations& decorations;
+
+        static const std::string EXPORT_TOKEN;
 
     };
 }

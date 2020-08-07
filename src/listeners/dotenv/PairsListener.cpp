@@ -6,9 +6,10 @@
 using namespace dotenv;
 
 
-PairsListener::PairsListener(const bool overwrite, SymbolsTable& symbols_table):
+PairsListener::PairsListener(const bool overwrite, SymbolsTable& symbols_table, TreeDecorations& decorations):
     overwrite(overwrite),
-    symbols_table(symbols_table)
+    symbols_table(symbols_table),
+    decorations(decorations)
 {
 
 }
@@ -16,7 +17,6 @@ PairsListener::PairsListener(const bool overwrite, SymbolsTable& symbols_table):
 
 void PairsListener::enterPair(DotenvParser::PairContext* ctx)
 {
-    _errored = false;
     _key.clear();
     _value.clear();
 }
@@ -26,7 +26,7 @@ void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 {
     // If there was some kind of parsing error due by rules not detectable
     // by lexer or parser, do not add the pair to the symbol table
-    if (_errored)
+    if (decorations.get_errored(ctx))
     {
         return;
     }
@@ -47,18 +47,9 @@ void PairsListener::exitPair(DotenvParser::PairContext* ctx)
 }
 
 
-void PairsListener::enterKey(DotenvParser::KeyContext* ctx)
-{
-    if (ctx->export_token != nullptr and ctx->export_token->getText() != "export")
-    {
-        _errored = true;
-    }
-}
-
-
 void PairsListener::exitKey(DotenvParser::KeyContext* ctx)
 {
-    if (_errored)
+    if (decorations.get_errored(ctx))
     {
         return;
     }
@@ -77,7 +68,7 @@ void PairsListener::exitKey(DotenvParser::KeyContext* ctx)
 
 void PairsListener::exitValue(DotenvParser::ValueContext* ctx)
 {
-    if (_errored)
+    if (decorations.get_errored(ctx))
     {
         return;
     }

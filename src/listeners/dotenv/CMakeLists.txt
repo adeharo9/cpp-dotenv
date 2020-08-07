@@ -2,6 +2,8 @@
 
 set(DOTENV_LISTENERS_LIB dotenv_listeners CACHE INTERNAL "")
 set(DOTENV_LISTENERS_SRC
+    CheckerListener.cpp
+    CheckerListener.h
     PairsListener.cpp
     PairsListener.h
 )
@@ -11,6 +13,7 @@ add_library(${DOTENV_LISTENERS_LIB} ${DOTENV_LISTENERS_SRC})
 target_link_libraries(${DOTENV_LISTENERS_LIB}
     ${DOTENV_GENERATED_LIB}
     ${ENVIRON_LIB}
+    ${ERRORS_LIB}
     ${STRUCTURES_LIB}
 )
 

@@ -1,5 +1,6 @@
 #include "Parser.h"
 
+#include "CheckerListener.h"
 #include "ExpanderListener.h"
 #include "PairsListener.h"
 #include "ResolverListener.h"
@@ -13,7 +14,6 @@
 
 #include "environ.h"
 
-#include <string>
 #include <utility>
 
 
@@ -40,6 +40,7 @@ void dotenv::Parser::parse()
     unresolved = 0;
     symbols_table.clear();
 
+    check();
     parse_dotenv();
 
     // Interpolation is the resolution of nested variables
@@ -54,19 +55,18 @@ void dotenv::Parser::parse()
 }
 
 
+void dotenv::Parser::check()
+{
+    CheckerListener checker_listener(dotenv_decorations);
+    walk_dotenv(is, checker_listener);
+}
+
+
 void dotenv::Parser::parse_dotenv()
 {
     // Extract raw key-value pairs
-    ANTLRInputStream input(is);
-    DotenvLexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
-    tokens.fill();
-
-    DotenvParser parser(&tokens);
-    tree = parser.dotenv();
-
-    PairsListener pairs_listener(overwrite, symbols_table);
-    walker.walk(&pairs_listener, tree);
+    PairsListener pairs_listener(overwrite, symbols_table, dotenv_decorations);
+    walk_dotenv(is, pairs_listener);
 }
 
 
@@ -207,6 +207,20 @@ void dotenv::Parser::resolve_unresolved()
             }
         }
     }
+}
+
+
+void dotenv::Parser::walk_dotenv(istream& dotenv, tree::ParseTreeListener& listener)
+{
+    ANTLRInputStream input(dotenv);
+    DotenvLexer lexer(&input);
+    CommonTokenStream tokens(&lexer);
+    tokens.fill();
+
+    DotenvParser parser(&tokens);
+    tree = parser.line();
+
+    walker.walk(&listener, tree);
 }
 
 

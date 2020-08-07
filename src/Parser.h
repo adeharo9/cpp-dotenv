@@ -2,10 +2,12 @@
 
 
 #include "SymbolsTable.h"
+#include "TreeDecorations.h"
 
 #include "antlr4-runtime.h"
 
 #include <fstream>
+#include <string>
 
 
 namespace dotenv
@@ -20,6 +22,7 @@ namespace dotenv
 
     private:
 
+        void check();
         void parse_dotenv();
         void parse_line();
         void resolve();
@@ -27,6 +30,8 @@ namespace dotenv
         void register_env() const;
 
         void resolve_unresolved();
+
+        void walk_dotenv(std::istream& dotenv, antlr4::tree::ParseTreeListener& listener);
         void walk_line(const std::string& line, antlr4::tree::ParseTreeListener& listener);
 
     private:
@@ -40,6 +45,7 @@ namespace dotenv
 
         size_t unresolved;
         SymbolsTable symbols_table;
+        TreeDecorations dotenv_decorations;
 
     };
 }
