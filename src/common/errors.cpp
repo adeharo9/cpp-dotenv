@@ -16,4 +16,4 @@ void errors::token_error(Token* token)
 }
 
 
-errors::logger log;
+logger errors::log;
