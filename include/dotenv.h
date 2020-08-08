@@ -19,6 +19,9 @@ namespace dotenv
 
         const value_type operator[](const key_type& k) const;
 
+    public:
+
+        virtual ~dotenv() = default;
         dotenv(const dotenv&) = delete;
         void operator=(const dotenv&) = delete;
 
