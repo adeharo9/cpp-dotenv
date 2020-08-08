@@ -24,11 +24,13 @@ namespace dotenv
         bool defined() const;
         bool resolved() const;
         bool local() const;
+        size_t line() const;
         std::string& value();
         const std::string& value() const;
 
         void set_declared();
         void set_defined();
+        void set_line(size_t line);
         void set_value(const std::string& value);
 
         void dependency_add_one();
@@ -40,6 +42,7 @@ namespace dotenv
         bool _defined;
         bool _local;
 
+        size_t _line;
         size_t _num_depends;
         std::string _value;
 

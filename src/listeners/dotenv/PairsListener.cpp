@@ -41,6 +41,7 @@ void PairsListener::exitPair(DotenvParser::PairContext* ctx)
     }
 
     SymbolRecord record;
+    record.set_line(ctx->getStart()->getLine());
     record.set_value(_value);
 
     symbols_table.emplace(_key, record);

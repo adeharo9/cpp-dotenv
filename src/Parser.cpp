@@ -203,7 +203,7 @@ void dotenv::Parser::report_unresolved_vars()
         // it by walking through its dependencies again
         if (record.local() and not record.complete())
         {
-            LineCheckerListener checker_listener;
+            LineCheckerListener checker_listener(record.line());
             walk_line(record.value(), checker_listener);
         }
     } 

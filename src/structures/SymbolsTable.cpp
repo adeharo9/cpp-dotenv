@@ -12,6 +12,7 @@ SymbolRecord::SymbolRecord(const bool declared,
     _declared(declared),
     _defined(defined),
     _local(local),
+    _line(0),
     _num_depends(num_depends)
 {
 
