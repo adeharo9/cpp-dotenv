@@ -218,7 +218,7 @@ void dotenv::Parser::walk_dotenv(istream& dotenv, tree::ParseTreeListener& liste
     tokens.fill();
 
     DotenvParser parser(&tokens);
-    tree = parser.line();
+    tree = parser.dotenv();
 
     walker.walk(&listener, tree);
 }
