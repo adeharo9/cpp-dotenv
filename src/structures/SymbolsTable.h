@@ -30,7 +30,7 @@ namespace dotenv
 
         void set_declared();
         void set_defined();
-        void set_line(size_t line);
+        void set_line(const size_t line);
         void set_value(const std::string& value);
 
         void dependency_add_one();

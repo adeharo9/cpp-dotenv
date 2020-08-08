@@ -51,6 +51,12 @@ bool SymbolRecord::local() const
 }
 
 
+size_t SymbolRecord::line() const
+{
+    return _line;
+}
+
+
 string& SymbolRecord::value()
 {
     return _value;
@@ -72,6 +78,12 @@ void SymbolRecord::set_declared()
 void SymbolRecord::set_defined()
 {
     _defined = true;
+}
+
+
+void SymbolRecord::set_line(const size_t line)
+{
+    _line = line;
 }
 
 
