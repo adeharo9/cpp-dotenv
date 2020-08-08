@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-#include "DotenvCheckerListener.h"
+#include "CheckerListener.h"
 #include "ExpanderListener.h"
 #include "ReferencesListener.h"
 #include "ResolverListener.h"
@@ -68,7 +68,7 @@ void dotenv::Parser::parse_dotenv(istream& is, const bool overwrite)
     TreeDecorations dotenv_decorations;
 
     // Check for errors on the tree
-    DotenvCheckerListener checker_listener(dotenv_decorations);
+    CheckerListener checker_listener(dotenv_decorations);
     walker.walk(&checker_listener, tree);
 
     // Extract raw key-value pairs
@@ -193,12 +193,16 @@ void dotenv::Parser::register_env(const bool overwrite) const
 
 void dotenv::Parser::report_unresolved_vars()
 {
+    // Iterate over all the original existing references (for having access to
+    // original location data)
     for (const pair<string, ReferenceRecord>& reference: references_table)
     {
         const string& ref_key = reference.first;
         const ReferenceRecord& reference_record = reference.second;
         const SymbolRecord& symbol_record = symbols_table.at(ref_key);
 
+        // If after all the process the reference symbol is still not resolved,
+        // it means it is part of a circular reference
         if (not symbol_record.complete())
         {
             errors::circular_reference_error(ref_key, reference_record.line(), reference_record.pos());

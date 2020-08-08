@@ -2,7 +2,6 @@
 
 
 using namespace dotenv;
-using namespace std;
 
 
 ReferenceRecord::ReferenceRecord(const size_t line, const size_t pos):

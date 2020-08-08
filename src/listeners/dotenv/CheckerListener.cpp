@@ -1,4 +1,4 @@
-#include "DotenvCheckerListener.h"
+#include "CheckerListener.h"
 
 #include "errors.h"
 
@@ -7,7 +7,7 @@ using namespace dotenv;
 using namespace std;
 
 
-DotenvCheckerListener::DotenvCheckerListener(TreeDecorations& decorations):
+CheckerListener::CheckerListener(TreeDecorations& decorations):
     _errored(false),
     decorations(decorations)
 {
@@ -15,19 +15,19 @@ DotenvCheckerListener::DotenvCheckerListener(TreeDecorations& decorations):
 }
 
 
-void DotenvCheckerListener::enterPair(DotenvParser::PairContext* ctx)
+void CheckerListener::enterPair(DotenvParser::PairContext* ctx)
 {
     _errored = false;
 }
 
 
-void DotenvCheckerListener::exitPair(DotenvParser::PairContext* ctx)
+void CheckerListener::exitPair(DotenvParser::PairContext* ctx)
 {
     decorations.put_errored(ctx, _errored);
 }
 
 
-void DotenvCheckerListener::exitKey(DotenvParser::KeyContext* ctx)
+void CheckerListener::exitKey(DotenvParser::KeyContext* ctx)
 {
     _errored = ctx->export_token != nullptr and ctx->export_token->getText() != EXPORT_TOKEN;
 
@@ -40,10 +40,10 @@ void DotenvCheckerListener::exitKey(DotenvParser::KeyContext* ctx)
 }
 
 
-void DotenvCheckerListener::exitValue(DotenvParser::ValueContext* ctx)
+void CheckerListener::exitValue(DotenvParser::ValueContext* ctx)
 {
     decorations.put_errored(ctx, _errored);
 }
 
 
-const string DotenvCheckerListener::EXPORT_TOKEN = "export";
+const string CheckerListener::EXPORT_TOKEN = "export";
