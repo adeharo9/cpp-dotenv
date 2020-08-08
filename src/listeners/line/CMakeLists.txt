@@ -8,8 +8,10 @@ set(LINE_LISTENERS_SRC
     ReferencesListener.h
     ResolverListener.cpp
     ResolverListener.h
-    UnresolvedListener.cpp
-    UnresolvedListener.h
+    UndefinedListener.cpp
+    UndefinedListener.h
+    UnresolvableListener.cpp
+    UnresolvableListener.h
 )
 
 add_library(${LINE_LISTENERS_LIB} ${LINE_LISTENERS_SRC})
