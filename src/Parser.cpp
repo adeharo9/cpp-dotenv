@@ -5,6 +5,7 @@
 #include "PairsListener.h"
 #include "ResolverListener.h"
 #include "SymbolsListener.h"
+#include "TreeDecorations.h"
 #include "UnresolvedListener.h"
 
 #include "DotenvLexer.h"
@@ -22,51 +23,54 @@ using namespace dotenv;
 using namespace std;
 
 
-dotenv::Parser::Parser(istream& is, const bool overwrite, const bool interpolate):
-    interpolate(interpolate),
-    overwrite(overwrite),
-    is(is),
-    tree(nullptr),
+dotenv::Parser::Parser():
     unresolved(0)
 {
 
 }
 
 
-void dotenv::Parser::parse()
+void dotenv::Parser::parse(istream& is, const bool overwrite, const bool interpolate)
 {
     // Some initialization in case a parser is reused
-    tree = nullptr;
     unresolved = 0;
     symbols_table.clear();
 
-    check();
-    parse_dotenv();
+    parse_dotenv(is, overwrite);
 
     // Interpolation is the resolution of nested variables
     if (interpolate)
     {
         parse_line();
-        resolve();
+        resolve_vars();
     }
 
-    expand();
-    register_env();
+    expand_escape();
+    register_env(overwrite);
 }
 
 
-void dotenv::Parser::check()
+void dotenv::Parser::parse_dotenv(istream& is, const bool overwrite)
 {
+    ANTLRInputStream input(is);
+    DotenvLexer lexer(&input);
+    CommonTokenStream tokens(&lexer);
+    tokens.fill();
+
+    DotenvParser parser(&tokens);
+    tree::ParseTree* tree = parser.dotenv();
+
+    // Decorations on the dotenv parse tree for storing several info
+    // throughout listeners
+    TreeDecorations dotenv_decorations;
+
+    // Check for errors on the tree
     CheckerListener checker_listener(dotenv_decorations);
-    walk_dotenv(is, checker_listener);
-}
+    walker.walk(&checker_listener, tree);
 
-
-void dotenv::Parser::parse_dotenv()
-{
     // Extract raw key-value pairs
     PairsListener pairs_listener(overwrite, symbols_table, dotenv_decorations);
-    walk_dotenv(is, pairs_listener);
+    walker.walk(&pairs_listener, tree);
 }
 
 
@@ -98,7 +102,7 @@ void dotenv::Parser::parse_line()
 }
 
 
-void dotenv::Parser::resolve()
+void dotenv::Parser::resolve_vars()
 {
     // If there are no circular dependencies, each iteration should at
     // least resolve one variable, so the loop is expected to finish
@@ -141,13 +145,13 @@ void dotenv::Parser::resolve()
         // Solve them by erasing the references on the string
         if (old_unresolved == unresolved)
         {
-            resolve_unresolved();
+            resolve_unresolved_vars();
         }
     }
 }
 
 
-void dotenv::Parser::expand()
+void dotenv::Parser::expand_escape()
 {
     for (const pair<string, SymbolRecord>& symbol: symbols_table)
     {
@@ -167,7 +171,7 @@ void dotenv::Parser::expand()
 }
 
 
-void dotenv::Parser::register_env() const
+void dotenv::Parser::register_env(const bool overwrite) const
 {
     for (const pair<string, SymbolRecord>& symbol: symbols_table)
     {
@@ -183,7 +187,7 @@ void dotenv::Parser::register_env() const
 }
 
 
-void dotenv::Parser::resolve_unresolved()
+void dotenv::Parser::resolve_unresolved_vars()
 {
     for (const pair<string, SymbolRecord>& symbol: symbols_table)
     {
@@ -210,20 +214,6 @@ void dotenv::Parser::resolve_unresolved()
 }
 
 
-void dotenv::Parser::walk_dotenv(istream& dotenv, tree::ParseTreeListener& listener)
-{
-    ANTLRInputStream input(dotenv);
-    DotenvLexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
-    tokens.fill();
-
-    DotenvParser parser(&tokens);
-    tree = parser.dotenv();
-
-    walker.walk(&listener, tree);
-}
-
-
 void dotenv::Parser::walk_line(const string& line, tree::ParseTreeListener& listener)
 {
     ANTLRInputStream input(line);
@@ -232,7 +222,7 @@ void dotenv::Parser::walk_line(const string& line, tree::ParseTreeListener& list
     tokens.fill();
 
     LineParser parser(&tokens);
-    tree = parser.line();
+    tree::ParseTree* tree = parser.line();
 
     walker.walk(&listener, tree);
 }
