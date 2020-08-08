@@ -15,6 +15,8 @@ namespace dotenv
     public:
 
         SymbolsListener(const std::string& key, SymbolsTable& symbols_table);
+        SymbolsListener(const SymbolsListener& symbols_listener) = default;
+        virtual ~SymbolsListener() = default;
 
         virtual void exitVariable(LineParser::VariableContext* ctx) override;
 

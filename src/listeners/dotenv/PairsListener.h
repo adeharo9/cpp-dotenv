@@ -16,6 +16,8 @@ namespace dotenv
     public:
 
         PairsListener(const bool overwrite, SymbolsTable& symbols_table, TreeDecorations& decorations);
+        PairsListener(const PairsListener& pairs_listener) = default;
+        virtual ~PairsListener() = default;
 
         virtual void enterPair(DotenvParser::PairContext* ctx) override;
         virtual void exitPair(DotenvParser::PairContext* ctx) override;

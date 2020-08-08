@@ -8,6 +8,7 @@ using namespace std;
 
 
 CheckerListener::CheckerListener(TreeDecorations& decorations):
+    _errored(false),
     decorations(decorations)
 {
 
@@ -16,32 +17,32 @@ CheckerListener::CheckerListener(TreeDecorations& decorations):
 
 void CheckerListener::enterPair(DotenvParser::PairContext* ctx)
 {
-    errored = false;
+    _errored = false;
 }
 
 
 void CheckerListener::exitPair(DotenvParser::PairContext* ctx)
 {
-    decorations.put_errored(ctx, errored);
+    decorations.put_errored(ctx, _errored);
 }
 
 
 void CheckerListener::exitKey(DotenvParser::KeyContext* ctx)
 {
-    errored = ctx->export_token != nullptr and ctx->export_token->getText() != EXPORT_TOKEN;
+    _errored = ctx->export_token != nullptr and ctx->export_token->getText() != EXPORT_TOKEN;
 
-    if (errored)
+    if (_errored)
     {
         errors::token_error(ctx->export_token);
     }
 
-    decorations.put_errored(ctx, errored);
+    decorations.put_errored(ctx, _errored);
 }
 
 
 void CheckerListener::exitValue(DotenvParser::ValueContext* ctx)
 {
-    decorations.put_errored(ctx, errored);
+    decorations.put_errored(ctx, _errored);
 }
 
 

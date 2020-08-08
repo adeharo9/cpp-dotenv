@@ -12,8 +12,8 @@ void errors::token_error(Token* token)
 {
     string line = to_string(token->getLine());
     string pos = to_string(token->getCharPositionInLine());
-    log.error(line + ":" + pos + " unidentified keyword \"" + token->getText() + "\"");
+    _log.error(line + ":" + pos + " unidentified keyword \"" + token->getText() + "\"");
 }
 
 
-logger errors::log;
+logger errors::_log;

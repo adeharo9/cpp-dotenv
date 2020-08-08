@@ -18,6 +18,8 @@ namespace dotenv
     public:
 
         ExpanderListener(const std::string& key, SymbolsTable& symbols_table);
+        ExpanderListener(const ExpanderListener& expander_listener) = default;
+        virtual ~ExpanderListener() = default;
 
         virtual void enterLine(LineParser::LineContext* ctx) override;
         virtual void exitLine(LineParser::LineContext* ctx) override;

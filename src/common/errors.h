@@ -16,7 +16,7 @@ namespace dotenv
 
     private:
 
-        static logger log;
+        static logger _log;
 
     };
 }

@@ -15,6 +15,8 @@ namespace dotenv
     public:
 
         CheckerListener(TreeDecorations& decorations);
+        CheckerListener(const CheckerListener& checker_listener) = default;
+        virtual ~CheckerListener() = default;
 
         virtual void enterPair(DotenvParser::PairContext* ctx) override;
         virtual void exitPair(DotenvParser::PairContext* ctx) override;
@@ -25,7 +27,7 @@ namespace dotenv
 
     private:
 
-        bool errored;
+        bool _errored;
         TreeDecorations& decorations;
 
         static const std::string EXPORT_TOKEN;

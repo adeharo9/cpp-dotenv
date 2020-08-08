@@ -16,6 +16,8 @@ namespace dotenv
     public:
 
         ResolverListener(const std::string& key, SymbolsTable& symbols_table);
+        ResolverListener(const ResolverListener& resovler_listener) = default;
+        virtual ~ResolverListener() = default;
 
         virtual void enterLine(LineParser::LineContext* ctx) override;
         virtual void exitLine(LineParser::LineContext* ctx) override;
