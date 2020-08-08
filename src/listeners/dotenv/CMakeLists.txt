@@ -2,8 +2,8 @@
 
 set(DOTENV_LISTENERS_LIB dotenv_listeners CACHE INTERNAL "")
 set(DOTENV_LISTENERS_SRC
-    CheckerListener.cpp
-    CheckerListener.h
+    DotenvCheckerListener.cpp
+    DotenvCheckerListener.h
     PairsListener.cpp
     PairsListener.h
 )

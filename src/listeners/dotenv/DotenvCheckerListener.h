@@ -10,13 +10,13 @@
 
 namespace dotenv
 {
-    class CheckerListener final: public DotenvBaseListener
+    class DotenvCheckerListener final: public DotenvBaseListener
     {
     public:
 
-        CheckerListener(TreeDecorations& decorations);
-        CheckerListener(const CheckerListener& checker_listener) = default;
-        virtual ~CheckerListener() = default;
+        DotenvCheckerListener(TreeDecorations& decorations);
+        DotenvCheckerListener(const DotenvCheckerListener& checker_listener) = default;
+        virtual ~DotenvCheckerListener() = default;
 
         virtual void enterPair(DotenvParser::PairContext* ctx) override;
         virtual void exitPair(DotenvParser::PairContext* ctx) override;

@@ -1,7 +1,8 @@
 #include "Parser.h"
 
-#include "CheckerListener.h"
+#include "DotenvCheckerListener.h"
 #include "ExpanderListener.h"
+#include "LineCheckerListener.h"
 #include "PairsListener.h"
 #include "ResolverListener.h"
 #include "SymbolsListener.h"
@@ -65,7 +66,7 @@ void dotenv::Parser::parse_dotenv(istream& is, const bool overwrite)
     TreeDecorations dotenv_decorations;
 
     // Check for errors on the tree
-    CheckerListener checker_listener(dotenv_decorations);
+    DotenvCheckerListener checker_listener(dotenv_decorations);
     walker.walk(&checker_listener, tree);
 
     // Extract raw key-value pairs
@@ -145,6 +146,7 @@ void dotenv::Parser::resolve_vars()
         // Solve them by erasing the references on the string
         if (old_unresolved == unresolved)
         {
+            report_unresolved_vars();
             resolve_unresolved_vars();
         }
     }
@@ -184,6 +186,27 @@ void dotenv::Parser::register_env(const bool overwrite) const
             setenv(key, record.value(), overwrite);
         }
     }
+}
+
+
+void dotenv::Parser::report_unresolved_vars()
+{
+    for (const pair<string, SymbolRecord>& symbol: symbols_table)
+    {
+        // std::pair.second returns a copy of the second element, and a
+        // reference is needed to check the evolution of the symbol's state,
+        // so take it directly from the symbols table
+        const string& key = symbol.first;
+        const SymbolRecord& record = symbols_table.at(key);
+
+        // If the symbol is local and is not yet resolved, try to resolve
+        // it by walking through its dependencies again
+        if (record.local() and not record.complete())
+        {
+            LineCheckerListener checker_listener;
+            walk_line(record.value(), checker_listener);
+        }
+    } 
 }
 
 

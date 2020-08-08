@@ -6,7 +6,7 @@ using namespace dotenv;
 using namespace std;
 
 
-void errors::token_error(Token* token, const vector<string>& expected)
+void errors::extraneous_input_error(Token* token, const vector<string>& expected)
 {
     string line = to_string(token->getLine());
     string pos = to_string(token->getCharPositionInLine());
@@ -25,6 +25,16 @@ void errors::token_error(Token* token, const vector<string>& expected)
     }
 
     _log.error(msg);
+}
+
+
+void errors::circular_reference_error(tree::TerminalNode* node)
+{
+    string line = to_string(node->getSymbol()->getLine());
+    string pos = to_string(node->getSymbol()->getCharPositionInLine());
+    string msg = "line " + line + ":" + pos + " circular reference '" + node->getText() + "'";
+
+    _log.warn(msg);
 }
 
 

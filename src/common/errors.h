@@ -15,7 +15,8 @@ namespace dotenv
     {
     public:
 
-        static void token_error(antlr4::Token* token, const std::vector<std::string>& expected = {});
+        static void extraneous_input_error(antlr4::Token* token, const std::vector<std::string>& expected = {});
+        static void circular_reference_error(antlr4::tree::TerminalNode* node);
 
     private:
 

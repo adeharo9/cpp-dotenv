@@ -4,6 +4,8 @@ set(LINE_LISTENERS_LIB line_listeners CACHE INTERNAL "")
 set(LINE_LISTENERS_SRC
     ExpanderListener.cpp
     ExpanderListener.h
+    LineCheckerListener.cpp
+    LineCheckerListener.h
     ResolverListener.cpp
     ResolverListener.h
     SymbolsListener.cpp
@@ -16,6 +18,7 @@ add_library(${LINE_LISTENERS_LIB} ${LINE_LISTENERS_SRC})
 
 target_link_libraries(${LINE_LISTENERS_LIB}
     ${ENVIRON_LIB}
+    ${ERRORS_LIB}
     ${LINE_GENERATED_LIB}
     ${STRUCTURES_LIB}
 )
