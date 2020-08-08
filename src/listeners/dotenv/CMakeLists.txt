@@ -4,8 +4,8 @@ set(DOTENV_LISTENERS_LIB dotenv_listeners CACHE INTERNAL "")
 set(DOTENV_LISTENERS_SRC
     DotenvCheckerListener.cpp
     DotenvCheckerListener.h
-    PairsListener.cpp
-    PairsListener.h
+    SymbolsListener.cpp
+    SymbolsListener.h
 )
 
 add_library(${DOTENV_LISTENERS_LIB} ${DOTENV_LISTENERS_SRC})

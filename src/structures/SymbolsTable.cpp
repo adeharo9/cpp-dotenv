@@ -13,6 +13,7 @@ SymbolRecord::SymbolRecord(const bool declared,
     _defined(defined),
     _local(local),
     _line(0),
+    _offset(0),
     _num_depends(num_depends)
 {
 
@@ -57,6 +58,12 @@ size_t SymbolRecord::line() const
 }
 
 
+size_t SymbolRecord::offset() const
+{
+    return _offset;
+}
+
+
 string& SymbolRecord::value()
 {
     return _value;
@@ -84,6 +91,12 @@ void SymbolRecord::set_defined()
 void SymbolRecord::set_line(const size_t line)
 {
     _line = line;
+}
+
+
+void SymbolRecord::set_offset(const size_t offset)
+{
+    _offset = offset;
 }
 
 

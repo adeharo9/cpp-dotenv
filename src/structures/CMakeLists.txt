@@ -2,6 +2,8 @@
 
 set(STRUCTURES_LIB structures CACHE INTERNAL "")
 set(STRUCTURES_SRC
+    ReferencesTable.cpp
+    ReferencesTable.h
     ReplaceStack.cpp
     ReplaceStack.h
     SymbolsTable.cpp

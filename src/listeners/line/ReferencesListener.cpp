@@ -1,4 +1,4 @@
-#include "SymbolsListener.h"
+#include "ReferencesListener.h"
 
 #include "environ.h"
 
@@ -7,16 +7,18 @@ using namespace dotenv;
 using namespace std;
 
 
-SymbolsListener::SymbolsListener(const string& key, SymbolsTable& symbols_table):
+ReferencesListener::ReferencesListener(const string& key, ReferencesTable& references_table, SymbolsTable& symbols_table):
     key(key),
+    references_table(references_table),
     symbols_table(symbols_table)
 {
 
 }
 
 
-void SymbolsListener::exitVariable(LineParser::VariableContext* ctx)
+void ReferencesListener::exitVariable(LineParser::VariableContext* ctx)
 {
+    size_t pos = ctx->getStart()->getCharPositionInLine();
     string var_name;
 
     // Get variable name and positional info
@@ -43,5 +45,9 @@ void SymbolsListener::exitVariable(LineParser::VariableContext* ctx)
     }
 
     // Add one dependency
-    symbols_table.at(key).dependency_add_one();
+    SymbolRecord& symbol_record = symbols_table.at(key);
+    symbol_record.dependency_add_one();
+
+    ReferenceRecord reference_record(symbol_record.line(), symbol_record.offset() + pos);
+    references_table.emplace(var_name, reference_record);
 }

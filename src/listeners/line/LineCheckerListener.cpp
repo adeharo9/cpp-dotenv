@@ -2,12 +2,16 @@
 
 #include "errors.h"
 
+#include <string>
 
+
+using namespace antlr4;
 using namespace dotenv;
+using namespace std;
 
 
-LineCheckerListener::LineCheckerListener(const size_t line):
-    line(line)
+LineCheckerListener::LineCheckerListener(ReferencesTable& references_table):
+    references_table(references_table)
 {
 
 }
@@ -15,12 +19,21 @@ LineCheckerListener::LineCheckerListener(const size_t line):
 
 void LineCheckerListener::exitVariable(LineParser::VariableContext* ctx)
 {
+    tree::TerminalNode* node;
+    string var_name = ctx->getText();
+
     if (ctx->BOUNDED_VARIABLE() != nullptr)
     {
-        errors::circular_reference_error(ctx->BOUNDED_VARIABLE(), line);
+        node = ctx->BOUNDED_VARIABLE();
+        var_name = var_name.substr(2, var_name.size() - 3);
     }
     else if (ctx->UNBOUNDED_VARIABLE() != nullptr)
     {
-        errors::circular_reference_error(ctx->UNBOUNDED_VARIABLE(), line);
+        node = ctx->UNBOUNDED_VARIABLE();
+        var_name = var_name.substr(1, var_name.size() - 1);
     }
+
+    ReferenceRecord& record = references_table.at(var_name);
+
+    errors::circular_reference_error(node, record.line(), record.pos());
 }

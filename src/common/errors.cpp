@@ -28,10 +28,9 @@ void errors::extraneous_input_error(Token* token, const vector<string>& expected
 }
 
 
-void errors::circular_reference_error(tree::TerminalNode* node, const size_t line)
+void errors::circular_reference_error(const string& reference, const size_t line, const size_t pos)
 {
-    size_t pos = node->getSymbol()->getCharPositionInLine();
-    string msg = "line " + to_string(line) + ":" + to_string(pos) + " circular reference '" + node->getText() + "'";
+    string msg = "line " + to_string(line) + ":" + to_string(pos) + " circular reference to '" + reference + "'";
 
     _log.error(msg, line, pos);
 }

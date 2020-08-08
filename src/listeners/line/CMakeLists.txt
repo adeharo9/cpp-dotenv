@@ -4,12 +4,10 @@ set(LINE_LISTENERS_LIB line_listeners CACHE INTERNAL "")
 set(LINE_LISTENERS_SRC
     ExpanderListener.cpp
     ExpanderListener.h
-    LineCheckerListener.cpp
-    LineCheckerListener.h
+    ReferencesListener.cpp
+    ReferencesListener.h
     ResolverListener.cpp
     ResolverListener.h
-    SymbolsListener.cpp
-    SymbolsListener.h
     UnresolvedListener.cpp
     UnresolvedListener.h
 )

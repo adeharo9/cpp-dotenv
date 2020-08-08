@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "ReferencesTable.h"
 #include "SymbolsTable.h"
 
 #include "antlr4-runtime.h"
@@ -37,6 +38,7 @@ namespace dotenv
     private:
 
         size_t unresolved;
+        ReferencesTable references_table;
         SymbolsTable symbols_table;
 
         antlr4::tree::ParseTreeWalker walker;

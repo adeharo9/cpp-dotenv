@@ -2,8 +2,7 @@
 
 #include "DotenvCheckerListener.h"
 #include "ExpanderListener.h"
-#include "LineCheckerListener.h"
-#include "PairsListener.h"
+#include "ReferencesListener.h"
 #include "ResolverListener.h"
 #include "SymbolsListener.h"
 #include "TreeDecorations.h"
@@ -73,8 +72,8 @@ void dotenv::Parser::parse_dotenv(istream& is, const bool overwrite)
     walker.walk(&checker_listener, tree);
 
     // Extract raw key-value pairs
-    PairsListener pairs_listener(overwrite, symbols_table, dotenv_decorations);
-    walker.walk(&pairs_listener, tree);
+    SymbolsListener symbols_listener(overwrite, symbols_table, dotenv_decorations);
+    walker.walk(&symbols_listener, tree);
 }
 
 
@@ -92,8 +91,8 @@ void dotenv::Parser::parse_line()
         // check for dependency on other symbols
         if (record.local())
         {
-            SymbolsListener symbols_listener(key, symbols_table);
-            walk_line(record.value(), symbols_listener);
+            ReferencesListener references_listener(key, references_table, symbols_table);
+            walk_line(record.value(), references_listener);
 
             // If after the check the symbol has dependency on other symbols,
             // take not of it for later resolving
@@ -194,22 +193,17 @@ void dotenv::Parser::register_env(const bool overwrite) const
 
 void dotenv::Parser::report_unresolved_vars()
 {
-    for (const pair<string, SymbolRecord>& symbol: symbols_table)
+    for (const pair<string, ReferenceRecord>& reference: references_table)
     {
-        // std::pair.second returns a copy of the second element, and a
-        // reference is needed to check the evolution of the symbol's state,
-        // so take it directly from the symbols table
-        const string& key = symbol.first;
-        const SymbolRecord& record = symbols_table.at(key);
+        const string& ref_key = reference.first;
+        const ReferenceRecord& reference_record = reference.second;
+        const SymbolRecord& symbol_record = symbols_table.at(ref_key);
 
-        // If the symbol is local and is not yet resolved, try to resolve
-        // it by walking through its dependencies again
-        if (record.local() and not record.complete())
+        if (not symbol_record.complete())
         {
-            LineCheckerListener checker_listener(record.line());
-            walk_line(record.value(), checker_listener);
+            errors::circular_reference_error(ref_key, reference_record.line(), reference_record.pos());
         }
-    } 
+    }
 }
 
 

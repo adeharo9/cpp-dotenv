@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "ReferencesTable.h"
 #include "LineBaseListener.h"
 #include "LineParser.h"
 
@@ -11,7 +12,7 @@ namespace dotenv
     {
     public:
 
-        LineCheckerListener(const size_t line);
+        LineCheckerListener(ReferencesTable& references_table);
         LineCheckerListener(const LineCheckerListener& checker_listener) = default;
         virtual ~LineCheckerListener() = default;
 
@@ -19,7 +20,7 @@ namespace dotenv
 
     private:
 
-        size_t line;
+        ReferencesTable& references_table;
 
     };
 }
