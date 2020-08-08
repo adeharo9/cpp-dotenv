@@ -33,7 +33,7 @@ void CheckerListener::exitKey(DotenvParser::KeyContext* ctx)
 
     if (_errored)
     {
-        errors::token_error(ctx->export_token);
+        errors::token_error(ctx->export_token, {EXPORT_TOKEN});
     }
 
     decorations.put_errored(ctx, _errored);

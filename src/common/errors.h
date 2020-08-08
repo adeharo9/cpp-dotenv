@@ -5,6 +5,9 @@
 
 #include "antlr4-runtime.h"
 
+#include <string>
+#include <vector>
+
 
 namespace dotenv
 {
@@ -12,7 +15,7 @@ namespace dotenv
     {
     public:
 
-        static void token_error(antlr4::Token* token);
+        static void token_error(antlr4::Token* token, const std::vector<std::string>& expected = {});
 
     private:
 
