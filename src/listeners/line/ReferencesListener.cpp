@@ -2,6 +2,8 @@
 
 #include "environ.h"
 
+#include <utility>
+
 
 using namespace dotenv;
 using namespace std;
@@ -36,11 +38,17 @@ void ReferencesListener::exitVariable(LineParser::VariableContext* ctx)
     // If the symbol does not exist on the table, it is not local (i.e. it is
     // defined on the outer environment)
     // Retrieve it from the environment and register it in the symbols table
-    // If it does not exist, it will be retrieved as an empty string
+    // If it does not exist, add it as not complete in the symbols table
     if (symbols_table.find(var_name) == symbols_table.end())
     {
-        SymbolRecord var(true, true, 0, false);
-        var.set_value(getenv(var_name).second);
+        pair<bool, string> result = getenv(var_name);
+        SymbolRecord var(result.first, result.first, 0, false);
+
+        // Only add value if it had one
+        if (result.first)
+        {
+            var.set_value(result.second);
+        }
         symbols_table.emplace(var_name, var);
     }
 

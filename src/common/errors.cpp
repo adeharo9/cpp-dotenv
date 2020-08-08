@@ -28,7 +28,15 @@ void errors::extraneous_input_error(Token* token, const vector<string>& expected
 }
 
 
-void errors::circular_reference_error(const string& reference, const size_t line, const size_t pos)
+void errors::undefined_reference_error(const string& reference, const size_t line, const size_t pos)
+{
+    string msg = "line " + to_string(line) + ":" + to_string(pos) + " undefined reference to '" + reference + "'";
+
+    _log.warn(msg, line, pos);
+}
+
+
+void errors::unresolvable_reference_error(const string& reference, const size_t line, const size_t pos)
 {
     string msg = "line " + to_string(line) + ":" + to_string(pos) + " circular reference to '" + reference + "'";
 
