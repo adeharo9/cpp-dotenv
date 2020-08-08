@@ -1,8 +1,10 @@
 #pragma once
 
 
+#include <map>
 #include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 
@@ -22,25 +24,65 @@ namespace dotenv
             TRACE = 5
         };
 
+
+        class position
+        {
+        public:
+
+            struct less
+            {
+                bool operator()(const position& p1, const position& p2);
+            };
+
+        public:
+
+            position(const size_t line, const size_t pos);
+            position(const position& position) = default;
+            virtual ~position() = default;
+
+            bool operator<(const position& p) const;
+
+        private:
+
+            size_t line;
+            size_t pos;
+
+        };
+
     public:
 
         logger(bool greedy = false);
         logger(const logger& logger);
         ~logger() = default;
 
-        void fatal(const std::string& msg);
-        void error(const std::string& msg);
-        void warn(const std::string& msg);
-        void info(const std::string& msg);
-        void debug(const std::string& msg);
-        void trace(const std::string& msg);
+        void fatal(const std::string& msg,
+                   const size_t line = -1,
+                   const size_t pos = -1);
+        void error(const std::string& msg,
+                   const size_t line = -1,
+                   const size_t pos = -1);
+        void warn(const std::string& msg,
+                  const size_t line = -1,
+                  const size_t pos = -1);
+        void info(const std::string& msg,
+                  const size_t line = -1,
+                  const size_t pos = -1);
+        void debug(const std::string& msg,
+                   const size_t line = -1,
+                   const size_t pos = -1);
+        void trace(const std::string& msg,
+                   const size_t line = -1,
+                   const size_t pos = -1);
 
         void flush();
         void clear();
 
     private:
 
-        void place_log(severity severity, const std::string& msg);
+        void place_log(severity severity,
+                       const std::string& msg,
+                       const size_t line,
+                       const size_t pos);
         void flush_severity(severity severity);
         void clear_severity(severity severity);
 
@@ -48,13 +90,13 @@ namespace dotenv
 
         bool _greedy;
 
-        std::vector<std::string> _fatal;
-        std::vector<std::string> _error;
-        std::vector<std::string> _warn;
-        std::vector<std::string> _info;
-        std::vector<std::string> _debug;
-        std::vector<std::string> _trace;
-        const std::vector<std::vector<std::string>*> _p_severity;
+        std::multimap<position, std::string, position::less> _fatal;
+        std::multimap<position, std::string, position::less> _error;
+        std::multimap<position, std::string, position::less> _warn;
+        std::multimap<position, std::string, position::less> _info;
+        std::multimap<position, std::string, position::less> _debug;
+        std::multimap<position, std::string, position::less> _trace;
+        const std::vector<std::multimap<position, std::string, position::less>*> _p_severity;
 
         static const std::string _name;
 

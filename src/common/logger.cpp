@@ -7,6 +7,26 @@ using namespace dotenv;
 using namespace std;
 
 
+logger::position::position(const size_t line, const size_t pos):
+    line(line),
+    pos(pos)
+{
+
+}
+
+
+bool logger::position::operator<(const position& p) const
+{
+    return this->line < p.line or (this->line == p.line and this->pos < p.pos);
+}
+
+
+bool logger::position::less::operator()(const position& p1, const position& p2)
+{
+    return p1 < p2;
+}
+
+
 logger::logger(bool greedy):
     _greedy(greedy),
     _fatal(),
@@ -51,39 +71,39 @@ logger::logger(const logger& logger):
 }
 
 
-void logger::fatal(const string& msg)
+void logger::fatal(const string& msg, const size_t line, const size_t pos)
 {
-    place_log(severity::FATAL, msg);
+    place_log(severity::FATAL, msg, line, pos);
 }
 
 
-void logger::error(const string& msg)
+void logger::error(const string& msg, const size_t line, const size_t pos)
 {
-    place_log(severity::ERROR, msg);
+    place_log(severity::ERROR, msg, line, pos);
 }
 
 
-void logger::warn(const string& msg)
+void logger::warn(const string& msg, const size_t line, const size_t pos)
 {
-    place_log(severity::WARN, msg);
+    place_log(severity::WARN, msg, line, pos);
 }
 
 
-void logger::info(const string& msg)
+void logger::info(const string& msg, const size_t line, const size_t pos)
 {
-    place_log(severity::INFO, msg);
+    place_log(severity::INFO, msg, line, pos);
 }
 
 
-void logger::debug(const string& msg)
+void logger::debug(const string& msg, const size_t line, const size_t pos)
 {
-    place_log(severity::DEBUG, msg);
+    place_log(severity::DEBUG, msg, line, pos);
 }
 
 
-void logger::trace(const string& msg)
+void logger::trace(const string& msg, const size_t line, const size_t pos)
 {
-    place_log(severity::TRACE, msg);
+    place_log(severity::TRACE, msg, line, pos);
 }
 
 
@@ -109,11 +129,11 @@ void logger::clear()
 }
 
 
-void logger::place_log(severity severity, const string& msg)
+void logger::place_log(severity severity, const string& msg, const size_t line, const size_t pos)
 {
     string str = _name + ": " + _severity_lvls.at(severity) + " - " + msg;
 
-    _p_severity.at(severity)->emplace_back(str);
+    _p_severity.at(severity)->emplace(position{line, pos}, str);
 
     if (_greedy)
     {
@@ -125,11 +145,11 @@ void logger::place_log(severity severity, const string& msg)
 void logger::flush_severity(severity severity)
 {
     ostream& os = *_out_severity.at(severity);
-    vector<string>& container = *_p_severity.at(severity);
+    multimap<position, string, position::less>& container = *_p_severity.at(severity);
 
-    for (const string& msg: container)
+    for (const pair<position, string>& element: container)
     {
-        os << msg << endl;
+        os << element.second << endl;
     }
 
     container.clear();
