@@ -15,6 +15,7 @@
 #include "LineParser.h"
 
 #include "environ.h"
+#include "errors.h"
 
 #include <utility>
 
@@ -36,6 +37,7 @@ void dotenv::Parser::parse(istream& is, const bool overwrite, const bool interpo
     // Some initialization in case a parser is reused
     unresolved = 0;
     symbols_table.clear();
+    errors::clear();
 
     parse_dotenv(is, overwrite);
 
@@ -48,6 +50,7 @@ void dotenv::Parser::parse(istream& is, const bool overwrite, const bool interpo
 
     expand_escape();
     register_env(overwrite);
+    errors::flush();
 }
 
 

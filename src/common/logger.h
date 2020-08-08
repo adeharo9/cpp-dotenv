@@ -24,7 +24,7 @@ namespace dotenv
 
     public:
 
-        logger(bool terminal = true);
+        logger(bool greedy = false);
         logger(const logger& logger);
         ~logger() = default;
 
@@ -35,13 +35,18 @@ namespace dotenv
         void debug(const std::string& msg);
         void trace(const std::string& msg);
 
+        void flush();
+        void clear();
+
     private:
 
         void place_log(severity severity, const std::string& msg);
+        void flush_severity(severity severity);
+        void clear_severity(severity severity);
 
     private:
 
-        bool _terminal;
+        bool _greedy;
 
         std::vector<std::string> _fatal;
         std::vector<std::string> _error;

@@ -37,4 +37,16 @@ void errors::circular_reference_error(tree::TerminalNode* node, const size_t lin
 }
 
 
+void errors::flush()
+{
+    _log.flush();
+}
+
+
+void errors::clear()
+{
+    _log.clear();
+}
+
+
 logger errors::_log;
