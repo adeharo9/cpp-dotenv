@@ -56,23 +56,23 @@ namespace dotenv
         ~logger() = default;
 
         void fatal(const std::string& msg,
-                   const size_t line = -1,
-                   const size_t pos = -1);
+                   const size_t line = 0,
+                   const size_t pos = 0);
         void error(const std::string& msg,
-                   const size_t line = -1,
-                   const size_t pos = -1);
+                   const size_t line = 0,
+                   const size_t pos = 0);
         void warn(const std::string& msg,
-                  const size_t line = -1,
-                  const size_t pos = -1);
+                  const size_t line = 0,
+                  const size_t pos = 0);
         void info(const std::string& msg,
-                  const size_t line = -1,
-                  const size_t pos = -1);
+                  const size_t line = 0,
+                  const size_t pos = 0);
         void debug(const std::string& msg,
-                   const size_t line = -1,
-                   const size_t pos = -1);
+                   const size_t line = 0,
+                   const size_t pos = 0);
         void trace(const std::string& msg,
-                   const size_t line = -1,
-                   const size_t pos = -1);
+                   const size_t line = 0,
+                   const size_t pos = 0);
 
         void flush();
         void clear();
