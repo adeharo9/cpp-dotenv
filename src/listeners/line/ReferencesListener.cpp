@@ -1,6 +1,7 @@
 #include "ReferencesListener.h"
 
 #include "environ.h"
+#include "escape.h"
 
 #include <utility>
 
@@ -44,10 +45,11 @@ void ReferencesListener::exitVariable(LineParser::VariableContext* ctx)
         pair<bool, string> result = getenv(var_name);
         SymbolRecord var(result.first, result.first, 0, false);
 
-        // Only add value if it had one
+        // Only add value if it had one and escape-encode it so its value is
+        // not altered by variable resolution nor escape sequence expansion
         if (result.first)
         {
-            var.set_value(result.second);
+            var.set_value(encode_string(result.second));
         }
         symbols_table.emplace(var_name, var);
     }
@@ -58,4 +60,24 @@ void ReferencesListener::exitVariable(LineParser::VariableContext* ctx)
 
     ReferenceRecord reference_record(symbol_record.line(), symbol_record.offset() + pos);
     references_table.emplace(var_name, reference_record);
+}
+
+
+string ReferencesListener::encode_string(const string& decoded)
+{
+    // Encode string backwards so indices are not changed by in-place
+    // substitutions
+    string encoded(decoded);
+
+    for (long i = encoded.size() - 1; i >= 0; --i)
+    {
+        pair<bool, string> result = escape::encode_escape(encoded.at(i));
+
+        if (result.first)
+        {
+            encoded.erase(i, 1).insert(i, result.second);
+        }
+    }
+
+    return encoded;
 }

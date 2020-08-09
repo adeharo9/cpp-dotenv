@@ -1,11 +1,11 @@
-#include "ResolverListener.h"
+#include "LocalResolverListener.h"
 
 
 using namespace dotenv;
 using namespace std;
 
 
-ResolverListener::ResolverListener(const string& key, SymbolsTable& symbols_table):
+LocalResolverListener::LocalResolverListener(const string& key, SymbolsTable& symbols_table):
     key(key),
     symbols_table(symbols_table)
 {
@@ -13,21 +13,21 @@ ResolverListener::ResolverListener(const string& key, SymbolsTable& symbols_tabl
 }
 
 
-void ResolverListener::enterLine(LineParser::LineContext* ctx)
+void LocalResolverListener::enterLine(LineParser::LineContext* ctx)
 {
     // Clear the stack in case the listener is reused
     resolve_stack.clear();
 }
 
 
-void ResolverListener::exitLine(LineParser::LineContext* ctx)
+void LocalResolverListener::exitLine(LineParser::LineContext* ctx)
 {
     // At this point all the resolve operations have been registered
     resolve_stack.run();
 }
 
 
-void ResolverListener::exitVariable(LineParser::VariableContext* ctx)
+void LocalResolverListener::exitVariable(LineParser::VariableContext* ctx)
 {
     size_t pos;
     size_t size;
@@ -60,7 +60,7 @@ void ResolverListener::exitVariable(LineParser::VariableContext* ctx)
 
     // If the found symbol is completely defined and resolved, substitute it in
     // the original string
-    if (var.complete())
+    if (var.local() and var.complete())
     {
         SymbolRecord& record = symbols_table.at(key);
 

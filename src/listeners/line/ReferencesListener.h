@@ -23,6 +23,10 @@ namespace dotenv
 
     private:
 
+        static std::string encode_string(const std::string& decoded);
+
+    private:
+
         const std::string& key;
         ReferencesTable& references_table;
         SymbolsTable& symbols_table;

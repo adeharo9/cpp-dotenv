@@ -23,6 +23,34 @@ else()
 endif()
 
 
+set(ESCAPE_LIB escape CACHE INTERNAL "")
+set(ESCAPE_SRC
+    escape.cpp
+    escape.h
+)
+
+add_library(${ESCAPE_LIB} ${ESCAPE_SRC})
+
+target_link_libraries(${ESCAPE_LIB}
+    ${ANTLR4_CPP_RUNTIME}
+    ${LOGGER_LIB}
+)
+
+target_include_directories(${ESCAPE_LIB} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+    target_compile_options(${ESCAPE_LIB} PRIVATE
+        -g -Wall -O0
+    )
+else()
+    target_compile_options(${ESCAPE_LIB} PRIVATE
+        -O3
+    )
+endif()
+
+
 set(LOGGER_LIB logger CACHE INTERNAL "")
 set(LOGGER_SRC
     logger.cpp

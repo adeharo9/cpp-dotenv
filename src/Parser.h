@@ -30,10 +30,13 @@ namespace dotenv
         void expand_escape();
         void register_env(const bool interpolate) const;
 
-        void report_undefined_vars();
+        void resolve_local_vars();
+        void resolve_external_vars();
         void resolve_undefined_vars();
-        void report_unresolvable_vars();
         void resolve_unresolvable_vars();
+
+        void report_undefined_vars();
+        void report_unresolvable_vars();
 
         void walk_line(const std::string& line, antlr4::tree::ParseTreeListener& listener);
 

@@ -2,8 +2,9 @@
 
 #include "CheckerListener.h"
 #include "ExpanderListener.h"
+#include "ExternalResolverListener.h"
 #include "ReferencesListener.h"
-#include "ResolverListener.h"
+#include "LocalResolverListener.h"
 #include "SymbolsListener.h"
 #include "TreeDecorations.h"
 #include "UndefinedListener.h"
@@ -108,6 +109,10 @@ void dotenv::Parser::parse_line()
 
 void dotenv::Parser::resolve_vars()
 {
+    // First resolve external variables, since they will all be solved on a
+    // single iteration given that they are not resolved nor expanded
+    resolve_external_vars();
+
     // External undefined vars will not be resolved in the loop, so solve them
     // at the beginning so other variables depending on them can be resolved
     report_undefined_vars();
@@ -119,34 +124,7 @@ void dotenv::Parser::resolve_vars()
     while (unresolved > 0)
     {
         old_unresolved = unresolved;
-        for (const pair<string, SymbolRecord>& symbol: symbols_table)
-        {
-            // std::pair.second returns a copy of the second element, and a
-            // reference is needed to check the evolution of the symbol's state,
-            // so take it directly from the symbols table
-            const string& key = symbol.first;
-            const SymbolRecord& record = symbols_table.at(key);
-
-            // If the symbol is local and is not yet resolved, try to resolve
-            // it by walking through its dependencies again
-            if (record.local() and not record.complete())
-            {
-                ResolverListener resolver_listener(key, symbols_table);
-                walk_line(record.value(), resolver_listener);
-
-                // If the symbol is now completed, note it
-                if (record.complete())
-                {
-                    --unresolved;
-                }
-
-                // No need to further wait in this situation
-                if (unresolved == 0)
-                {
-                    break;
-                }
-            }
-        }
+        resolve_local_vars();
 
         // If there are no new variables resolved in an iteration, it means
         // there is at least one circular dependency and thus it cannot be
@@ -154,10 +132,12 @@ void dotenv::Parser::resolve_vars()
         // Solve them by erasing the references on the string
         if (old_unresolved == unresolved)
         {
-            report_unresolvable_vars();
-            resolve_unresolvable_vars();
+            break;
         }
     }
+
+    report_unresolvable_vars();
+    resolve_unresolvable_vars();
 }
 
 
@@ -197,21 +177,55 @@ void dotenv::Parser::register_env(const bool overwrite) const
 }
 
 
-void dotenv::Parser::report_undefined_vars()
+void dotenv::Parser::resolve_local_vars()
 {
-    // Iterate over all the original existing references (for having access to
-    // original location data)
-    for (const pair<string, ReferenceRecord>& reference: references_table)
+    for (const pair<string, SymbolRecord>& symbol: symbols_table)
     {
-        const string& ref_key = reference.first;
-        const ReferenceRecord& reference_record = reference.second;
-        const SymbolRecord& symbol_record = symbols_table.at(ref_key);
+        // std::pair.second returns a copy of the second element, and a
+        // reference is needed to check the evolution of the symbol's state,
+        // so take it directly from the symbols table
+        const string& key = symbol.first;
+        const SymbolRecord& record = symbols_table.at(key);
 
-        // If after all the process the reference symbol is still not resolved,
-        // it means it is part of a circular reference
-        if (not symbol_record.complete() and not symbol_record.local())
+        // If the symbol is local and is not yet resolved, try to resolve
+        // it by walking through its dependencies again
+        if (record.local() and not record.complete())
         {
-            errors::undefined_reference_error(ref_key, reference_record.line(), reference_record.pos());
+            LocalResolverListener resolver_listener(key, symbols_table);
+            walk_line(record.value(), resolver_listener);
+
+            // If the symbol is now completed, note it
+            if (record.complete())
+            {
+                --unresolved;
+            }
+        }
+    }
+}
+
+
+void dotenv::Parser::resolve_external_vars()
+{
+    for (const pair<string, SymbolRecord>& symbol: symbols_table)
+    {
+        // std::pair.second returns a copy of the second element, and a
+        // reference is needed to check the evolution of the symbol's state,
+        // so take it directly from the symbols table
+        const string& key = symbol.first;
+        const SymbolRecord& record = symbols_table.at(key);
+
+        // If the symbol is local and is not yet resolved, try to resolve
+        // it by walking through its dependencies again
+        if (record.local() and not record.complete())
+        {
+            ExternalResolverListener resolver_listener(key, symbols_table);
+            walk_line(record.value(), resolver_listener);
+
+            // If the symbol is now completed, note it
+            if (record.complete())
+            {
+                --unresolved;
+            }
         }
     }
 }
@@ -244,26 +258,6 @@ void dotenv::Parser::resolve_undefined_vars()
 }
 
 
-void dotenv::Parser::report_unresolvable_vars()
-{
-    // Iterate over all the original existing references (for having access to
-    // original location data)
-    for (const pair<string, ReferenceRecord>& reference: references_table)
-    {
-        const string& ref_key = reference.first;
-        const ReferenceRecord& reference_record = reference.second;
-        const SymbolRecord& symbol_record = symbols_table.at(ref_key);
-
-        // If after all the process the reference symbol is still not resolved,
-        // it means it is part of a circular reference
-        if (not symbol_record.complete() and symbol_record.local())
-        {
-            errors::unresolvable_reference_error(ref_key, reference_record.line(), reference_record.pos());
-        }
-    }
-}
-
-
 void dotenv::Parser::resolve_unresolvable_vars()
 {
     for (const pair<string, SymbolRecord>& symbol: symbols_table)
@@ -286,6 +280,46 @@ void dotenv::Parser::resolve_unresolvable_vars()
             {
                 --unresolved;
             }
+        }
+    }
+}
+
+
+void dotenv::Parser::report_undefined_vars()
+{
+    // Iterate over all the original existing references (for having access to
+    // original location data)
+    for (const pair<string, ReferenceRecord>& reference: references_table)
+    {
+        const string& ref_key = reference.first;
+        const ReferenceRecord& reference_record = reference.second;
+        const SymbolRecord& symbol_record = symbols_table.at(ref_key);
+
+        // If after all the process the reference symbol is still not resolved,
+        // it means it is part of a circular reference
+        if (not symbol_record.complete() and not symbol_record.local())
+        {
+            errors::undefined_reference_error(ref_key, reference_record.line(), reference_record.pos());
+        }
+    }
+}
+
+
+void dotenv::Parser::report_unresolvable_vars()
+{
+    // Iterate over all the original existing references (for having access to
+    // original location data)
+    for (const pair<string, ReferenceRecord>& reference: references_table)
+    {
+        const string& ref_key = reference.first;
+        const ReferenceRecord& reference_record = reference.second;
+        const SymbolRecord& symbol_record = symbols_table.at(ref_key);
+
+        // If after all the process the reference symbol is still not resolved,
+        // it means it is part of a circular reference
+        if (not symbol_record.complete() and symbol_record.local())
+        {
+            errors::unresolvable_reference_error(ref_key, reference_record.line(), reference_record.pos());
         }
     }
 }

@@ -28,15 +28,9 @@ namespace dotenv
 
     private:
 
-        static std::pair<bool, std::string> decode_escaped(const std::string& escaped);
-
-    private:
-
         const std::string& key;
         SymbolsTable& symbols_table;
         ReplaceStack expand_stack;
-
-        static const std::unordered_map<std::string, std::string> ESC_EQ;
 
     };
 }

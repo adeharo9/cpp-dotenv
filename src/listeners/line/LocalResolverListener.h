@@ -11,13 +11,13 @@
 
 namespace dotenv
 {
-    class ResolverListener final: public LineBaseListener
+    class LocalResolverListener final: public LineBaseListener
     {
     public:
 
-        ResolverListener(const std::string& key, SymbolsTable& symbols_table);
-        ResolverListener(const ResolverListener& resovler_listener) = default;
-        virtual ~ResolverListener() = default;
+        LocalResolverListener(const std::string& key, SymbolsTable& symbols_table);
+        LocalResolverListener(const LocalResolverListener& resovler_listener) = default;
+        virtual ~LocalResolverListener() = default;
 
         virtual void enterLine(LineParser::LineContext* ctx) override;
         virtual void exitLine(LineParser::LineContext* ctx) override;
