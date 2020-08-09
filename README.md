@@ -1,6 +1,6 @@
 # [C++ .ENV](https://github.com/adeharo9/cpp-dotenv)
 
-<img src="https://raw.githubusercontent.com/adeharo9/cpp-dotenv/dev/cpp-dotenv.png" alt="cpp-dotenv" align="right" />
+<img src="https://raw.githubusercontent.com/adeharo9/cpp-dotenv/dev/cpp-dotenv.png" alt="cpp-dotenv" align="right"/>
 
 ![version 0.3.0](https://img.shields.io/badge/version-0.3.0-blue "version 0.3.0")
 ![BSD 3-clause license](https://img.shields.io/badge/license-BSD%203--clause-green "BSD 3-clause license")
