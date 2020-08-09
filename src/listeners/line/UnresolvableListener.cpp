@@ -56,10 +56,11 @@ void UnresolvableListener::exitVariable(LineParser::VariableContext* ctx)
     // If there is more than one substitution operation, they must be performed
     // from end to beginning so position and size indices are maintained
     // constant throughout the different operations
+    // Do not mark variables as solved at this point since that would mess with
+    // the resolution system by making it think that they are not unresolvable
     if (var.local() and not var.complete())
     {
         SymbolRecord& record = symbols_table.at(key);
         resolve_stack.emplace(record.value(), "", pos, size);
-        record.dependency_resolve_one();
     }
 }
