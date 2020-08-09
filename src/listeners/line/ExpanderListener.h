@@ -18,6 +18,8 @@ namespace dotenv
     public:
 
         ExpanderListener(const std::string& key, SymbolsTable& symbols_table);
+        ExpanderListener(const ExpanderListener& expander_listener) = default;
+        virtual ~ExpanderListener() = default;
 
         virtual void enterLine(LineParser::LineContext* ctx) override;
         virtual void exitLine(LineParser::LineContext* ctx) override;
@@ -26,15 +28,9 @@ namespace dotenv
 
     private:
 
-        static std::pair<bool, std::string> decode_escaped(const std::string& escaped);
-
-    private:
-
         const std::string& key;
         SymbolsTable& symbols_table;
         ReplaceStack expand_stack;
-
-        static const std::unordered_map<std::string, std::string> ESC_EQ;
 
     };
 }

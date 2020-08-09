@@ -11,11 +11,13 @@
 
 namespace dotenv
 {
-    class UnresolvedListener final: public LineBaseListener
+    class UndefinedListener final: public LineBaseListener
     {
     public:
 
-        UnresolvedListener(const std::string& key, SymbolsTable& symbols_table);
+        UndefinedListener(const std::string& key, SymbolsTable& symbols_table);
+        UndefinedListener(const UndefinedListener& undefined_listener) = default;
+        virtual ~UndefinedListener() = default;
 
         virtual void enterLine(LineParser::LineContext* ctx) override;
         virtual void exitLine(LineParser::LineContext* ctx) override;

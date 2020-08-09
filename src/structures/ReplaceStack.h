@@ -12,6 +12,8 @@ namespace dotenv
     public:
 
         ReplaceOperation(std::string& original, const std::string& replace, size_t pos, size_t size);
+        ReplaceOperation(const ReplaceOperation& replace_operation) = default;
+        virtual ~ReplaceOperation() = default;
 
         void run();
 

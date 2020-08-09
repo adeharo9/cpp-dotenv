@@ -1,11 +1,11 @@
-#include "ResolverListener.h"
+#include "LocalResolverListener.h"
 
 
 using namespace dotenv;
 using namespace std;
 
 
-ResolverListener::ResolverListener(const string& key, SymbolsTable& symbols_table):
+LocalResolverListener::LocalResolverListener(const string& key, SymbolsTable& symbols_table):
     key(key),
     symbols_table(symbols_table)
 {
@@ -13,45 +13,33 @@ ResolverListener::ResolverListener(const string& key, SymbolsTable& symbols_tabl
 }
 
 
-void ResolverListener::enterLine(LineParser::LineContext* ctx)
+void LocalResolverListener::enterLine(LineParser::LineContext* ctx)
 {
     // Clear the stack in case the listener is reused
     resolve_stack.clear();
 }
 
 
-void ResolverListener::exitLine(LineParser::LineContext* ctx)
+void LocalResolverListener::exitLine(LineParser::LineContext* ctx)
 {
     // At this point all the resolve operations have been registered
     resolve_stack.run();
 }
 
 
-void ResolverListener::exitVariable(LineParser::VariableContext* ctx)
+void LocalResolverListener::exitVariable(LineParser::VariableContext* ctx)
 {
-    size_t pos;
-    size_t size;
-    string var_name;
+    string var_name = ctx->getText();
+    size_t pos = ctx->getStart()->getCharPositionInLine();
+    size_t size = var_name.size();
 
-    // Get variable name and positional info
+    // Format variable name
     if (ctx->BOUNDED_VARIABLE() != nullptr)
     {
-        var_name += ctx->BOUNDED_VARIABLE()->getText();
-
-        // Start position of the variable substring in the line
-        pos = ctx->BOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
-        size = var_name.size();
-
         var_name = var_name.substr(2, var_name.size() - 3);
     }
     else if (ctx->UNBOUNDED_VARIABLE() != nullptr)
     {
-        var_name += ctx->UNBOUNDED_VARIABLE()->getText();
-
-        // Start position of the variable substring in the line
-        pos = ctx->UNBOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
-        size = var_name.size();
-
         var_name = var_name.substr(1, var_name.size() - 1);
     }
 
@@ -60,7 +48,7 @@ void ResolverListener::exitVariable(LineParser::VariableContext* ctx)
 
     // If the found symbol is completely defined and resolved, substitute it in
     // the original string
-    if (var.complete())
+    if (var.local() and var.complete())
     {
         SymbolRecord& record = symbols_table.at(key);
 

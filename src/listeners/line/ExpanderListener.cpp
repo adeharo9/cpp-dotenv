@@ -1,5 +1,7 @@
 #include "ExpanderListener.h"
 
+#include "escape.h"
+
 
 using namespace antlr4;
 using namespace dotenv;
@@ -36,7 +38,7 @@ void ExpanderListener::exitContent(LineParser::ContentContext* ctx)
         size_t pos = ESC_SEQ->getSymbol()->getCharPositionInLine();
         size_t size = sequence.size();
 
-        pair<bool, string> expanded = decode_escaped(sequence);
+        pair<bool, string> expanded = escape::decode_escape(sequence);
 
         if (expanded.first)
         {
@@ -45,34 +47,3 @@ void ExpanderListener::exitContent(LineParser::ContentContext* ctx)
         }
     }
 }
-
-
-pair<bool, string> ExpanderListener::decode_escaped(const std::string& escaped)
-{
-    bool success = ESC_EQ.find(escaped) != ESC_EQ.end();
-    string expanded;
-
-    if (success)
-    {
-        expanded = ESC_EQ.at(escaped);
-    }
-
-    return {success, expanded};
-}
-
-
-const unordered_map<string, string> ExpanderListener::ESC_EQ
-{
-    { "\\'" , "'"  },
-    { "\\\"", "\"" },
-    { "\\?" , "?"  },
-    { "\\\\", "\\" },
-    { "\\a" , "\a" },
-    { "\\b" , "\b" },
-    { "\\f" , "\f" },
-    { "\\n" , "\n" },
-    { "\\r" , "\r" },
-    { "\\t" , "\t" },
-    { "\\v" , "\v" },
-    { "\\$" , "$"  }
-};

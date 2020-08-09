@@ -4,18 +4,24 @@ set(LINE_LISTENERS_LIB line_listeners CACHE INTERNAL "")
 set(LINE_LISTENERS_SRC
     ExpanderListener.cpp
     ExpanderListener.h
-    ResolverListener.cpp
-    ResolverListener.h
-    SymbolsListener.cpp
-    SymbolsListener.h
-    UnresolvedListener.cpp
-    UnresolvedListener.h
+    ExternalResolverListener.cpp
+    ExternalResolverListener.h
+    ReferencesListener.cpp
+    ReferencesListener.h
+    LocalResolverListener.cpp
+    LocalResolverListener.h
+    UndefinedListener.cpp
+    UndefinedListener.h
+    UnresolvableListener.cpp
+    UnresolvableListener.h
 )
 
 add_library(${LINE_LISTENERS_LIB} ${LINE_LISTENERS_SRC})
 
 target_link_libraries(${LINE_LISTENERS_LIB}
     ${ENVIRON_LIB}
+    ${ERRORS_LIB}
+    ${ESCAPE_LIB}
     ${LINE_GENERATED_LIB}
     ${STRUCTURES_LIB}
 )

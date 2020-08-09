@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "SymbolsTable.h"
+#include "TreeDecorations.h"
 #include "DotenvBaseListener.h"
 #include "DotenvParser.h"
 
@@ -10,16 +10,17 @@
 
 namespace dotenv
 {
-    class PairsListener final: public DotenvBaseListener
+    class CheckerListener final: public DotenvBaseListener
     {
     public:
 
-        PairsListener(const bool overwrite, SymbolsTable& symbols_table);
+        CheckerListener(TreeDecorations& decorations);
+        CheckerListener(const CheckerListener& checker_listener) = default;
+        virtual ~CheckerListener() = default;
 
         virtual void enterPair(DotenvParser::PairContext* ctx) override;
         virtual void exitPair(DotenvParser::PairContext* ctx) override;
 
-        virtual void enterKey(DotenvParser::KeyContext* ctx) override;
         virtual void exitKey(DotenvParser::KeyContext* ctx) override;
 
         virtual void exitValue(DotenvParser::ValueContext* ctx) override;
@@ -27,11 +28,9 @@ namespace dotenv
     private:
 
         bool _errored;
-        std::string _key;
-        std::string _value;
+        TreeDecorations& decorations;
 
-        bool overwrite;
-        SymbolsTable& symbols_table;
+        static const std::string EXPORT_TOKEN;
 
     };
 }

@@ -2,13 +2,21 @@
 
 set(STRUCTURES_LIB structures CACHE INTERNAL "")
 set(STRUCTURES_SRC
+    ReferencesTable.cpp
+    ReferencesTable.h
     ReplaceStack.cpp
     ReplaceStack.h
     SymbolsTable.cpp
     SymbolsTable.h
+    TreeDecorations.cpp
+    TreeDecorations.h
 )
 
 add_library(${STRUCTURES_LIB} ${STRUCTURES_SRC})
+
+target_link_libraries(${STRUCTURES_LIB}
+    ${ANTLR4_CPP_RUNTIME}
+)
 
 target_include_directories(${STRUCTURES_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}

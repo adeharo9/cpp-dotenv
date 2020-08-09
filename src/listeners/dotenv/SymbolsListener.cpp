@@ -1,4 +1,4 @@
-#include "PairsListener.h"
+#include "SymbolsListener.h"
 
 #include "environ.h"
 
@@ -6,27 +6,29 @@
 using namespace dotenv;
 
 
-PairsListener::PairsListener(const bool overwrite, SymbolsTable& symbols_table):
+SymbolsListener::SymbolsListener(const bool overwrite, SymbolsTable& symbols_table, TreeDecorations& decorations):
     overwrite(overwrite),
-    symbols_table(symbols_table)
+    symbols_table(symbols_table),
+    decorations(decorations)
 {
 
 }
 
 
-void PairsListener::enterPair(DotenvParser::PairContext* ctx)
+void SymbolsListener::enterPair(DotenvParser::PairContext* ctx)
 {
-    _errored = false;
+    _line = ctx->getStart()->getLine();
+    _offset = 0;
     _key.clear();
     _value.clear();
 }
 
 
-void PairsListener::exitPair(DotenvParser::PairContext* ctx)
+void SymbolsListener::exitPair(DotenvParser::PairContext* ctx)
 {
     // If there was some kind of parsing error due by rules not detectable
     // by lexer or parser, do not add the pair to the symbol table
-    if (_errored)
+    if (decorations.get_errored(ctx))
     {
         return;
     }
@@ -41,24 +43,17 @@ void PairsListener::exitPair(DotenvParser::PairContext* ctx)
     }
 
     SymbolRecord record;
+    record.set_line(_line);
+    record.set_offset(_offset);
     record.set_value(_value);
 
     symbols_table.emplace(_key, record);
 }
 
 
-void PairsListener::enterKey(DotenvParser::KeyContext* ctx)
+void SymbolsListener::exitKey(DotenvParser::KeyContext* ctx)
 {
-    if (ctx->export_token != nullptr and ctx->export_token->getText() != "export")
-    {
-        _errored = true;
-    }
-}
-
-
-void PairsListener::exitKey(DotenvParser::KeyContext* ctx)
-{
-    if (_errored)
+    if (decorations.get_errored(ctx))
     {
         return;
     }
@@ -75,30 +70,19 @@ void PairsListener::exitKey(DotenvParser::KeyContext* ctx)
 }
 
 
-void PairsListener::exitValue(DotenvParser::ValueContext* ctx)
+void SymbolsListener::exitValue(DotenvParser::ValueContext* ctx)
 {
-    if (_errored)
+    if (decorations.get_errored(ctx))
     {
         return;
     }
 
-    size_t n_unquoted = ctx->UNQUOTED_STRING().size();
+    _offset = ctx->getStart()->getCharPositionInLine();
+    _value += ctx->getText();
+    
 
-    if (n_unquoted > 0)
+    if (ctx->STRING() != nullptr)
     {
-        for (size_t i = 0; i < n_unquoted; ++i)
-        {
-            if (i > 0)
-            {
-                _value += ctx->WS(i-1)->getText();
-            }
-
-            _value += ctx->UNQUOTED_STRING(i)->getText();
-        }
-    }
-    else if (ctx->STRING() != nullptr)
-    {
-        _value += ctx->STRING()->getText();
         _value = _value.substr(1, _value.size() - 2);
     }
 }

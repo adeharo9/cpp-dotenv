@@ -18,8 +18,8 @@ dotenv::dotenv& dotenv::dotenv::load_dotenv(const string& dotenv_path, const boo
 
     if (env_file.good())
     {
-        Parser parser(env_file, overwrite, interpolate);
-        parser.parse();
+        Parser parser;
+        parser.parse(env_file, overwrite, interpolate);
         env_file.close();
     }
 
