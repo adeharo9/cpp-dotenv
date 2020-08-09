@@ -7,7 +7,7 @@ using namespace std;
 
 pair<bool, string> escape::encode_escape(const char sequence)
 {
-    return escape::encode_escape({1, sequence});
+    return escape::encode_escape(string(1, sequence));
 }
 
 
