@@ -152,6 +152,11 @@ Variable resolution can be explicitly turned off by setting the [`interpolate` p
 
 > _NOTE: variable references inside externally-loaded variables **ARE NOT RESOLVED**._
 
+There are two different types of supported variable references:
+
+- **Raw-style unbounded references** of the style `$VAR_NAME`, which only support references composed by letters, numbers and underscores. Their name must start by a letter or by an underscore, and have at least one character.
+- **Bounded references**, of the style `${VAR_NAME}`, which support a wider set of character possibilities.
+
 ## Examples
 
 ### Basic usage
