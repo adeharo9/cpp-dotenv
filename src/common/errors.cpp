@@ -36,7 +36,7 @@ void errors::undefined_reference_error(const string& reference, const size_t lin
 }
 
 
-void errors::unresolvable_reference_error(const string& reference, const size_t line, const size_t pos)
+void errors::circular_reference_error(const string& reference, const size_t line, const size_t pos)
 {
     string msg = "line " + to_string(line) + ":" + to_string(pos) + " unresolvable reference to '" + reference + "'";
 

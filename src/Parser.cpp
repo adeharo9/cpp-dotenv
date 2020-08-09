@@ -319,7 +319,7 @@ void dotenv::Parser::report_unresolvable_vars()
         // it means it is part of a circular reference
         if (not symbol_record.complete() and symbol_record.local())
         {
-            errors::unresolvable_reference_error(ref_key, reference_record.line(), reference_record.pos());
+            errors::circular_reference_error(ref_key, reference_record.line(), reference_record.pos());
         }
     }
 }
