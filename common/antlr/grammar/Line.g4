@@ -41,7 +41,7 @@ fragment OCTAL_ESC
     | '\\' ('0'..'7')
     ;
 fragment UNBOUNDED_STRING: ~[{}]+;
-fragment LIMITED_UNBOUNDED_STRING: LETTER (LETTER | DIGIT)*;
+fragment LIMITED_UNBOUNDED_STRING: ('_' | LETTER) ('_' | LETTER | DIGIT)*;
 fragment LETTER: 'a'..'z' | 'A'..'Z';
 fragment DIGIT: '0'..'9';
 fragment HEX_DIGIT: ('0'..'9'|'a'..'f'|'A'..'F');
