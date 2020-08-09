@@ -15,7 +15,6 @@ message(STATUS "Building CPP-DOTENV in ${CMAKE_BUILD_TYPE} mode")
 #------------------- SUBDIRECTORY ADDITION ------------------------------------
 
 add_subdirectory(common)
-add_subdirectory(antlr)
 add_subdirectory(src)
 
 #----------------------- LIBRARY CONFIGURATION --------------------------------
