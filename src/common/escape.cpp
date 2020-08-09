@@ -43,7 +43,9 @@ const unordered_map<string, string> escape::ENC_ESC_EQ
 {
     { "'" , "\\'" },
     { "\"", "\\\""},
-    { "?" , "\\?" },
+    { "=" , "\\=" },
+    { "$" , "\\$" },
+    { "#" , "\\#" },
     { "\\", "\\\\"},
     { "\a", "\\a" },
     { "\b", "\\b" },
@@ -51,8 +53,7 @@ const unordered_map<string, string> escape::ENC_ESC_EQ
     { "\n", "\\n" },
     { "\r", "\\r" },
     { "\t", "\\t" },
-    { "\v", "\\v" },
-    { "$" , "\\$" }
+    { "\v", "\\v" }
 };
 
 
@@ -60,7 +61,9 @@ const unordered_map<string, string> escape::DEC_ESC_EQ
 {
     { "\\'" , "'"  },
     { "\\\"", "\"" },
-    { "\\?" , "?"  },
+    { "\\=" , "="  },
+    { "\\$" , "$"  },
+    { "\\#" , "#"  },
     { "\\\\", "\\" },
     { "\\a" , "\a" },
     { "\\b" , "\b" },
@@ -68,6 +71,5 @@ const unordered_map<string, string> escape::DEC_ESC_EQ
     { "\\n" , "\n" },
     { "\\r" , "\r" },
     { "\\t" , "\t" },
-    { "\\v" , "\v" },
-    { "\\$" , "$"  }
+    { "\\v" , "\v" }
 };
