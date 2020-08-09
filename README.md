@@ -1,11 +1,13 @@
 # [C++ .ENV](https://github.com/adeharo9/cpp-dotenv)
 
+<img src="https://raw.githubusercontent.com/adeharo9/cpp-dotenv/dev/cpp-dotenv.png" alt="cpp-dotenv" align="right" />
+
 ![version 0.3.0](https://img.shields.io/badge/version-0.3.0-blue "version 0.3.0")
 ![BSD 3-clause license](https://img.shields.io/badge/license-BSD%203--clause-green "BSD 3-clause license")
 
-C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) project. Loads environment variables from `.env` files for C++ projects.
+Loads environment variables from `.env` files for C++ projects.
 
-`load_dotenv()` method API inspired on Python's [python-dotenv](https://pypi.org/project/python-dotenv/) port of the dotenv project.
+C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) project. `load_dotenv()` method API inspired by Python's [python-dotenv](https://pypi.org/project/python-dotenv/) port of the dotenv project.
 
 > _**NOTE: please take into account this is still a developing project.**_
 
@@ -15,7 +17,7 @@ C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) projec
 2. [Build](#build)
    1. [CMake](#cmake)
 3. [Usage](#usage)
-   1. [`load_dotenv()` method](#load_dotenv()-method)
+   1. [`load_dotenv()` method](#load_dotenv-method)
 4. [Features](#features)
    1. [Error reporting](#error-reporting)
    2. [Escape sequence expansion](#escape-sequence-expansion)
@@ -139,7 +141,7 @@ Typical one-character escape sequences are supported (`\n`, `\t`, `\\`, etc.). D
 
 By default, already-defined environment variables are not overwritten even if redefined in some of the loaded files.
 
-This behavior can be changed, however, by calling the [`load_dotenv()` method](#load_dotenv()-method) with the [`overwrite` parameter](#parameters) set to `true`. For an example on how to use it, take a look at [this one](#several-dotenv-files).
+This behavior can be changed, however, by calling the [`load_dotenv()` method](#load_dotenv-method) with the [`overwrite` parameter](#parameters) set to `true`. For an example on how to use it, take a look at [this one](#several-dotenv-files).
 
 ### Variable resolution
 
@@ -148,7 +150,7 @@ This behavior can be changed, however, by calling the [`load_dotenv()` method](#
 - Variable reference with variables declared in the **same file** is order-independent: there's no need to worry about the declaration order of the variables inside a same file, **cpp-dotenv** will resolve all of the symbols regardless of their order of declaration.
 - Variable reference with variables declared on **different files** is order-depdendent on the loading order of the files via the `load_dotenv()` method: variables defined in later calls to `load_dotenv()` are not yet visible to files being processed at a previous load and will be treated as external variables.
 
-Variable resolution can be explicitly turned off by setting the [`interpolate` parameter](#parameters) of the [`load_dotenv()` method](#load_dotenv()-method) to `false`.
+Variable resolution can be explicitly turned off by setting the [`interpolate` parameter](#parameters) of the [`load_dotenv()` method](#load_dotenv-method) to `false`.
 
 > _NOTE: variable references inside externally-loaded variables **ARE NOT RESOLVED**._
 
