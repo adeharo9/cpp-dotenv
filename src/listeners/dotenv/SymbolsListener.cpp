@@ -78,11 +78,7 @@ void SymbolsListener::exitValue(DotenvParser::ValueContext* ctx)
     }
 
     _offset = ctx->getStart()->getCharPositionInLine();
-    
-    if (not ctx->UNQUOTED_STRING().empty() or ctx->STRING() != nullptr)
-    {
-        _value += ctx->getText();
-    }
+    _value += ctx->getText();
     
 
     if (ctx->STRING() != nullptr)
