@@ -29,29 +29,17 @@ void LocalResolverListener::exitLine(LineParser::LineContext* ctx)
 
 void LocalResolverListener::exitVariable(LineParser::VariableContext* ctx)
 {
-    size_t pos;
-    size_t size;
-    string var_name;
+    string var_name = ctx->getText();
+    size_t pos = ctx->getStart()->getCharPositionInLine();
+    size_t size = var_name.size();
 
-    // Get variable name and positional info
+    // Format variable name
     if (ctx->BOUNDED_VARIABLE() != nullptr)
     {
-        var_name += ctx->BOUNDED_VARIABLE()->getText();
-
-        // Start position of the variable substring in the line
-        pos = ctx->BOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
-        size = var_name.size();
-
         var_name = var_name.substr(2, var_name.size() - 3);
     }
     else if (ctx->UNBOUNDED_VARIABLE() != nullptr)
     {
-        var_name += ctx->UNBOUNDED_VARIABLE()->getText();
-
-        // Start position of the variable substring in the line
-        pos = ctx->UNBOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
-        size = var_name.size();
-
         var_name = var_name.substr(1, var_name.size() - 1);
     }
 

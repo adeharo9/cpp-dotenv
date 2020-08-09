@@ -29,25 +29,17 @@ void UndefinedListener::exitLine(LineParser::LineContext* ctx)
 
 void UndefinedListener::exitVariable(LineParser::VariableContext* ctx)
 {
-    size_t pos;
-    size_t size;
     string var_name = ctx->getText();
+    size_t pos = ctx->getStart()->getCharPositionInLine();
+    size_t size = var_name.size();
 
-    // Get variable positional info
+    // Format variable name
     if (ctx->BOUNDED_VARIABLE() != nullptr)
     {
-        // Start position of the variable substring in the line
-        pos = ctx->BOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
-        size = ctx->BOUNDED_VARIABLE()->getText().size();
-
         var_name = var_name.substr(2, var_name.size() - 3);
     }
     else if (ctx->UNBOUNDED_VARIABLE() != nullptr)
     {
-        // Start position of the variable substring in the line
-        pos = ctx->UNBOUNDED_VARIABLE()->getSymbol()->getCharPositionInLine();
-        size = ctx->UNBOUNDED_VARIABLE()->getText().size();
-
         var_name = var_name.substr(1, var_name.size() - 1);
     }
 

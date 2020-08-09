@@ -77,25 +77,16 @@ void SymbolsListener::exitValue(DotenvParser::ValueContext* ctx)
         return;
     }
 
-    size_t n_unquoted = ctx->UNQUOTED_STRING().size();
-
-    if (n_unquoted > 0)
+    _offset = ctx->getStart()->getCharPositionInLine();
+    
+    if (not ctx->UNQUOTED_STRING().empty() or ctx->STRING() != nullptr)
     {
-        for (size_t i = 0; i < n_unquoted; ++i)
-        {
-            if (i > 0)
-            {
-                _value += ctx->WS(i-1)->getText();
-            }
-
-            _value += ctx->UNQUOTED_STRING(i)->getText();
-        }
+        _value += ctx->getText();
     }
-    else if (ctx->STRING() != nullptr)
+    
+
+    if (ctx->STRING() != nullptr)
     {
-        _value += ctx->STRING()->getText();
         _value = _value.substr(1, _value.size() - 2);
     }
-
-    _offset = ctx->getStart()->getCharPositionInLine();
 }

@@ -21,18 +21,16 @@ ReferencesListener::ReferencesListener(const string& key, ReferencesTable& refer
 
 void ReferencesListener::exitVariable(LineParser::VariableContext* ctx)
 {
+    string var_name = ctx->getText();
     size_t pos = ctx->getStart()->getCharPositionInLine();
-    string var_name;
 
-    // Get variable name and positional info
+    // Format variable name
     if (ctx->BOUNDED_VARIABLE() != nullptr)
     {
-        var_name += ctx->BOUNDED_VARIABLE()->getText();
         var_name = var_name.substr(2, var_name.size() - 3);
     }
     else if (ctx->UNBOUNDED_VARIABLE() != nullptr)
     {
-        var_name += ctx->UNBOUNDED_VARIABLE()->getText();
         var_name = var_name.substr(1, var_name.size() - 1);
     }
 
