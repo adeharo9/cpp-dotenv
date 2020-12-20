@@ -6,7 +6,7 @@
 
 namespace dotenv
 {
-    class dotenv
+    class dotenvFacade
     {
     public:
 
@@ -15,31 +15,31 @@ namespace dotenv
 
     public:
 
-        dotenv& load_dotenv(const std::string& dotenv_path = env_filename,
+        dotenvFacade& load_dotenv(const std::string& dotenv_path = env_filename,
                             const bool overwrite = false,
                             const bool interpolate = true);
 
-        const value_type operator[](const key_type& k) const;
+        value_type operator[](const key_type& k) const;
 
     public:
 
-        virtual ~dotenv() = default;
-        dotenv(const dotenv&) = delete;
-        void operator=(const dotenv&) = delete;
+        virtual ~dotenvFacade() = default;
+        dotenvFacade(const dotenvFacade&) = delete;
+        void operator=(const dotenvFacade&) = delete;
 
-        static dotenv& instance();
+        static dotenvFacade& instance();
     
     private:
 
-        dotenv() = default;
+        dotenvFacade() = default;
 
     private:
 
         static const std::string env_filename;
-        static dotenv _instance;
+        static dotenvFacade _instance;
 
     };
 
 
-    extern dotenv& env;
+    extern dotenvFacade& env;
 }
