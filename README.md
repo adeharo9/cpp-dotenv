@@ -33,13 +33,21 @@ C++ implementation of NodeJS [dotenv](https://github.com/motdotla/dotenv) projec
 
 ## Dependencies
 
+**Shared Library Build** requires libantlr4-runtime-dev
+
+```sudo apt install libantlr4-runtime-dev```
+
+otherwise...
+
 **NONE**, for sure! :sunglasses: If it had any, it wouldn't follow the basic dotenv principles. All the needed libraries are shipped with this repository right out of the box.
+
 
 ## Build
 
 Supported build methods are:
 
 - [CMake](#cmake) (>=3.10)
+- [Shared Library](#share-library-build)
 
 ### CMake
 
@@ -54,6 +62,27 @@ target_link_libraries(YOUR_TARGET cpp_dotenv)
 ```
 
 After this, you might use the library as described in [usage](#usage); no extra scoping, no need to worry about the project's directory structure.
+
+### Share Library Build
+
+#### Build steps
+* Clone the repo
+* cd into the repo directory
+* ```mkdir build```
+* ```cd build```
+* ```cmake ../```
+* ```make install```
+
+#### Cmake 
+```
+find_package(PkgConfig REQUIRED)
+
+pkg_search_module(CPP_DOTENV QUIET cpp-dotenv)
+if(NOT CPP_DOTENV_FOUND)
+    message(ERROR "cpp-dotenv not found!")
+endif()
+target_link_libraries(YOUR_LIBRARY INTERFACE cpp-dotenv)
+```
 
 ## Usage
 

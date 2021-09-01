@@ -1,0 +1,10 @@
+prefix=@CPACK_PACKAGE_INSTALL_DIRECTORY@
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+Name: cpp-dotenv
+Description: @CMAKE_PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+Cflags: -I${includedir}
+Requires: antlr4_cpp_runtime
+Libs: -L${libdir} -l@TARGET1@
