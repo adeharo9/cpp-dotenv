@@ -9,7 +9,7 @@ project(cpp-dotenv
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(DOETENV_SHARED_LIB "Build CPP-DOTENV as a shared library" NO)
+option(DOTENV_SHARED_LIB "Build CPP-DOTENV as a shared library" NO)
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
     set(CMAKE_BUILD_TYPE RELEASE)
@@ -32,7 +32,7 @@ set(CPP_DOTENV_SRC
     src/dotenv.cpp
     include/dotenv.h
 )
-if(DOETENV_SHARED_LIB)
+if(DOTENV_SHARED_LIB)
     add_library(${CPP_DOTENV} SHARED ${CPP_DOTENV_SRC})
 else()
     add_library(${CPP_DOTENV} ${CPP_DOTENV_SRC})
@@ -69,7 +69,7 @@ configure_file(./cpp-dotenv.pc.in ${PROJECT_BINARY_DIR}/cpp-dotenv.pc @ONLY)
 
 
 #----------------------- INSTALL --------------------------------
-if(DOETENV_SHARED_LIB)
+if(DOTENV_SHARED_LIB)
     install(TARGETS ${CPP_DOTENV} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
     install(FILES ${CMAKE_SOURCE_DIR}/include/dotenv.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/)
     install(FILES ${PROJECT_BINARY_DIR}/cpp-dotenv.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
