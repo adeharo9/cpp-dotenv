@@ -34,8 +34,10 @@ set(CPP_DOTENV_SRC
 )
 if(DOTENV_SHARED_LIB)
     add_library(${CPP_DOTENV} SHARED ${CPP_DOTENV_SRC})
+    message(STATUS "Building as shared library")
 else()
     add_library(${CPP_DOTENV} ${CPP_DOTENV_SRC})
+    message(STATUS "Building as static library")
 endif()
 
 target_link_libraries(${CPP_DOTENV}
@@ -69,6 +71,7 @@ configure_file(./cpp-dotenv.pc.in ${PROJECT_BINARY_DIR}/cpp-dotenv.pc @ONLY)
 
 
 #----------------------- INSTALL --------------------------------
+include(GNUInstallDirs)
 if(DOTENV_SHARED_LIB)
     install(TARGETS ${CPP_DOTENV} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
     install(FILES ${CMAKE_SOURCE_DIR}/include/dotenv.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/)
