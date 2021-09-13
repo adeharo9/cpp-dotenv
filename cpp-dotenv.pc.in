@@ -6,5 +6,4 @@ Name: cpp-dotenv
 Description: @CMAKE_PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 Cflags: -I${includedir}
-Requires: antlr4_cpp_runtime
 Libs: -L${libdir} -l@TARGET1@
