@@ -42,3 +42,8 @@
 
 # CMake specifics
 build/
+/.idea/
+/cmake-build-*/
+
+# CLion
+.clion.source.upload.marker

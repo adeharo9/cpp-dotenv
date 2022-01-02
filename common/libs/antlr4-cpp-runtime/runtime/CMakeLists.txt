@@ -308,8 +308,11 @@ set(ANTLR4_CPP_RUNTIME_SRC
     src/tree/xpath/XPathWildcardElement.cpp
     src/tree/xpath/XPathWildcardElement.h
 )
-
-add_library(${ANTLR4_CPP_RUNTIME} ${ANTLR4_CPP_RUNTIME_SRC})
+if(DOTENV_SHARED_LIB)
+    add_library(${ANTLR4_CPP_RUNTIME} SHARED ${ANTLR4_CPP_RUNTIME_SRC})
+else()
+    add_library(${ANTLR4_CPP_RUNTIME} ${ANTLR4_CPP_RUNTIME_SRC})
+endif()
 
 target_include_directories(${ANTLR4_CPP_RUNTIME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -326,4 +329,9 @@ else()
     target_compile_options(${ANTLR4_CPP_RUNTIME} PUBLIC
         -Wno-attributes
     )
+endif()
+
+#----------------------- INSTALL --------------------------------
+if(DOTENV_SHARED_LIB)
+    install(TARGETS ${ANTLR4_CPP_RUNTIME} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
