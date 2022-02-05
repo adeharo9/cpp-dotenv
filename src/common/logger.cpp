@@ -21,7 +21,7 @@ bool logger::position::operator<(const position& p) const
 }
 
 
-bool logger::position::less::operator()(const position& p1, const position& p2)
+bool logger::position::less::operator()(const position& p1, const position& p2) const
 {
     return p1 < p2;
 }

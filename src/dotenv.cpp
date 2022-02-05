@@ -8,7 +8,6 @@
 
 
 using namespace std;
-using namespace dotenv;
 
 
 dotenv::dotenv& dotenv::dotenv::load_dotenv(const string& dotenv_path, const bool overwrite, const bool interpolate)

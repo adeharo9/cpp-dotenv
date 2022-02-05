@@ -31,7 +31,7 @@ namespace dotenv
 
             struct less
             {
-                bool operator()(const position& p1, const position& p2);
+                bool operator()(const position& p1, const position& p2) const;
             };
 
         public:
